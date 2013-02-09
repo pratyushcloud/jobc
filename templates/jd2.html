@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>Real Job Details</title>
+    <style type="text/css">
+      .label {text-align: right}
+      .error {color: red}
+    </style>
+
+  </head>
+
+  <body>
+    <h2>Job Details</h2>
+    <form method="post">
+      <table>
+      	<tr>
+          <td class="label">
+            Work Opportunity at firm
+          </td>
+          <td>
+            <input type="radio" name="wop" value="Excellent" {{wopcheck1}}>Excellent
+            <input type="radio" name="wop" value="Good" {{wopcheck2}}>Good
+            <input type="radio" name="wop" value="Ok" {{wopcheck3}}> OK
+            <input type="radio" name="wop" value="Notok" {{wopcheck4}}>Not Ok
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            Work Culture
+          </td>
+          <td>
+            <input type="radio" name="wc" value="Excellent" {{wccheck1}}>Excellent
+            <input type="radio" name="wc" value="Good" {{wcpcheck2}}>Good
+            <input type="radio" name="wc" value="Ok" {{wcpcheck3}}> OK
+            <input type="radio" name="wc" value="Notok" {{wccheck4}}>Not Ok
+          </td>
+        </tr>
+
+        <tr>
+          <td class="label">
+            Salary Growth
+          </td>
+          <td>
+            <input type="radio" name="wsg" value="Excellent" {{wsgcheck1}}>Excellent
+            <input type="radio" name="wsg" value="Good" {{wsgcheck2}}>Good
+            <input type="radio" name="wsg" value="Ok" {{wsgcheck3}}> OK
+            <input type="radio" name="wsg" value="Notok" {{wsgcheck4}}>Not Ok
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            Work Life Balance
+          </td>
+          <td>
+            <input type="radio" name="wlb" value="Excellent" {{wlbcheck1}}>Excellent
+            <input type="radio" name="wlb" value="Good" {{wlbcheck2}}>Good
+            <input type="radio" name="wlb" value="Ok" {{wlbcheck3}}> OK
+            <input type="radio" name="wlb" value="Notok" {{wlbcheck4}}>Not Ok
+
+          </td>
+
+        </tr>
+        <tr>
+			<td class="h2">
+           		Salary <br><br>
+          	</td>
+
+        </tr>
+        <tr>
+        	<td class="label">
+            	Fixed Salary
+          	</td>
+        	<td>
+            	<input type="text" name="fsalary" value="{{fsalary}}">
+          	</td>
+         </tr>
+         <tr>
+          	<td class="label">
+            	Variable Salary
+          	</td>
+          	<td>
+          <select>
+            <option value="ybonus">Yearly Bonus</option>
+            <option value="jbonus">Joining Bonus</option>
+          </select>
+        </td>
+          	<td>
+            	<input type="text" name="vsalary" value="{{vslary}}">
+          	</td>
+          </tr>
+          <tr>
+        	<td class="label">
+            	Stock Option
+          	</td>
+        	<td>
+            	<input type="radio" name="stock" value="Yes" {{stockcheck1}}>Yes
+            	<input type="radio" name="stock" value="No" {{stockcheck2}}>No
+          	</td>
+         </tr>
+         <tr>
+        	<td class="label">
+            	Alumni Base
+          	</td>
+        	<td>
+            	<input type="radio" name="abase" value="Strong" {{abasecheck1}}>Strong
+            	<input type="radio" name="abase" value="Moderate" {{abasecheck2}}>Moderate
+            	<input type="radio" name="abase" value="Weak" {{abasecheck3}}>Weak
+          	</td>
+         </tr>
+          <tr>
+          <td class="label">
+            Interview Questions/ Experience and Answers
+          </td>
+          <td>
+            <textarea name="iq" rows="10" cols="50" value=""></textarea>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            Exit Options
+          </td>
+          <td>
+            <textarea name="eo" rows="5" cols="50" value=""></textarea>
+          </td>
+        </tr>
+      </table>
+       <div class="error">
+        {{error}}
+      </div>
+
+      <input type="submit">
+</form>
+  </body>
+
+</html>

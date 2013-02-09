@@ -1,0 +1,135 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>Real Job Details</title>
+    <style type="text/css">
+      .label {text-align: right}
+      .error {color: red}
+    </style>
+
+  </head>
+
+  <body>
+    <h2>Job Details</h2>
+    <form method="post">
+      <table>
+        <tr>
+          <td class="label">
+            Post as
+          </td>
+          <td>
+            <input type="radio" name="postas" value="alum" {{authorcheck1}}>{{alumcallname}}
+            <input type="radio" name="postas" value="anonymous" {{authorcheck2}}>Anonymous
+            <input type="radio" name="postas" value="fullname" {{authorcheck3}}>{{fullname}}
+          </td>
+        </tr>
+
+        <tr>
+          <td class="label">
+            Job Title
+          </td>
+          <td>
+            <input type="text" name="title" value="{{title}}">
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            Company
+          </td>
+          <td>
+            <input type="text" name="company" value="{{company}}">
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            From:
+          </td>
+          <td>
+            <input type="text" name="sdate" value="{{sDate}}">
+          </td>
+          <td> to </td>
+          <td>
+            <input type="text" name="edate" value="{{eDate}}">
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            Function:
+          </td>
+          <td>
+          <select>
+            {%set fselected1 = ''%}
+            {%set fselected2 = ''%}
+            {%set fselected3 = ''%}
+            {%set fselected4 = ''%}
+            {%set fselected5 = ''%}
+            {%set fselected6 = ''%}
+            {% if function == "Marketing"%}
+            {% fselected1 = "selected"%}
+            {% elif function == "Sales"%}
+            {% fselected2 = "selected"%}
+            {% elif function == "Finance"%}
+            {% fselected3 = "selected"%}
+            {% elif function == "Consulting"%}
+            {% fselected4 = "selected"%}
+            {% elif function == "IT"%}
+            {% fselected5 = "selected"%}
+            {% elif function == "Supply Chain"%}
+            {% fselected6 = "selected"%}
+            {% endif %}
+            <option value="Marketing" {%fselcted1%}>Marketing</option>
+            <option value="Sales" {%fselcted2%}>Sales</option>
+            <option value="Finance" {%fselcted3%}>Finance</option>
+            <option value="Consulting" {%fselcted4%}>Consulting</option>
+            <option value="IT" {%fselcted5%}>IT</option>
+            <option value="Supply Chain" {%fselcted6%}>Supply Chain</option>
+          </select>
+        </td>
+        </tr>
+        <tr>
+          <td class="label">
+            Location:
+          </td>
+          <td>
+             <input type="text" name="location" value="{{location}}">
+          </td>
+        </tr>
+         <tr>
+          <td class="label">
+            Descibe a day in your job:
+          </td>
+          <td>
+            <textarea name="jd" rows="13" cols="75" value="">{{jd}}</textarea>
+          </td>
+        </tr>
+         <tr>
+          <td class="label">
+            What You love about your job:
+          </td>
+          <td>
+             <textarea name="jlove" rows="10" cols="75" value="">{{jlove}}</textarea>
+          </td>
+        </tr>
+         <tr>
+          <td class="label">
+            What you don't like about your job:
+          </td>
+          <td>
+             <textarea name="jhate" rows="5" cols="75" value="">{{jhate}}</textarea>
+          </td>
+        </tr>
+
+
+      </table>
+
+      <div class="error">
+        {{error}}
+      </div>
+
+      <input type="submit">
+    </form>
+  </body>
+
+</html>

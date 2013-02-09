@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link type="text/css" rel="stylesheet" href="/static/main.css" />
+
+  <title>Jobc</title>
+</head>
+
+<body>
+
+
+    <h2>Hi there Jokaite!</h2>
+	<img src="{{pictureUrl}}" alt={{fullname}} height="80" width="80">
+Help IIMC students chose a career! Find out what your peers, seniors and juniors are actually doing in their job!
+<br><br>
+<h2> Tell us about your post MBA jobs!</h2>
+{% for n in range(njobs-1, -1, -1)%}
+<tr>
+<td>	Tell us about your job <a  href="/jobc/realjd/_edit/{{job[n][2]}}">{{job[n][0]}} at {{job[n][1]}}</a></td> <br><br>
+
+</tr>
+{%endfor%}
+
+   <br><br>
+   You can post job review anonymously or post job review as an alum of IIMC or with your public credentials!
+   You control your profile!
+ </body>
+
+</html>
