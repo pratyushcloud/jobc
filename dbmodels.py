@@ -29,6 +29,8 @@ class Person(db.Model):
 class Job(db.Model):
 	person = db.ReferenceProperty(Person,collection_name='person_job')
 	company =  db.ReferenceProperty(Company,collection_name='person_company')
+	person_linkedin_id = db.StringProperty(required=True)
+	company_id = db.IntegerProperty(required=True)
 	sdate = db.DateTimeProperty(required=False)
 	edate = db.DateTimeProperty(required=True)
 	title = db.StringProperty(default="")

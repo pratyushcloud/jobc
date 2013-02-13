@@ -56,6 +56,22 @@ def getJob(jobkey):
 			memcache.set(jobkey, j)
 	return memcache.get(jobkey)
 
+def getPerson(linkedin_id):
+	if not memcache.get(linkedin_id):
+		persons = db.GqlQuery("SELECT * FROM Person where linkedin_id ='%s'"%linkedin_id)
+		persons.fetch(1)
+		for p in persons:
+			memcache.set(linkedin_id, p)
+	return memcache.get(linkedin_id)
+
+def getCompany(company_id):
+	if not memcache.get(str(company_id)):
+		companies = db.GqlQuery("SELECT * FROM Company where company_id =%s"%company_id)
+		companies.fetch(1)
+		for c in companies:
+			memcache.set(str(company_id), c)
+	return memcache.get(str(company_id))
+
 class MainPage(webapp2.RequestHandler) :
 	request_token = None	
 	def get(self) :
@@ -155,6 +171,16 @@ class PostLoginPage(webapp2.RequestHandler):
 		if (nconnection < 10) :
 			self.redirect("/jobc/inviteonly/?fname="+fname)
 		
+		person = dbmodels.Person.all().filter('linkedin_id = ', linkedin_id).get()
+		if not person:
+			person = dbmodels.Person(fname=fname, lname = lname, linkedin_id=linkedin_id, industry=industry, location=location)
+			#logging.error("pictureUrl " + pictureUrl)
+			if pictureUrl and pictureUrl != '':
+				person.picture = db.Blob(urlfetch.Fetch(pictureUrl).content)
+			person.put()
+
+
+
 		school_list = []
 
 		if j.has_key('educations'):
@@ -192,6 +218,8 @@ class PostLoginPage(webapp2.RequestHandler):
 						schooldb = dbmodels.School(schoolname=schoolName)
 						schooldb.put()
 					validschool = schooldb 
+					person.keyschool = validschool
+					person.put() # not recommended to do double db write
 					education = dbmodels.Education(person=person, school=schooldb, degree=degree, fieldofstudy=study_field, syear=syear, eyear=eyear)
 					# take the minimum year. person might have had two degrees from a school. we take the oldest one
 					if (syear_validSchool >  0 and eyear_validSchool > 0 and syear > 0 and eyear > 0) :
@@ -211,13 +239,7 @@ class PostLoginPage(webapp2.RequestHandler):
 			# Guy must have done certification or short term course
 			self.redirect("/jobc/inviteonly/?fname="+fname)
 
-		person = dbmodels.Person.all().filter('linkedin_id = ', linkedin_id).get()
-		if not person:
-			person = dbmodels.Person(fname=fname, lname = lname, linkedin_id=linkedin_id, industry=industry, location=location, keyschool=validSchool)
-			#logging.error("pictureUrl " + pictureUrl)
-			if pictureUrl and pictureUrl != '':
-				person.picture = db.Blob(urlfetch.Fetch(pictureUrl).content)
-			person.put()
+
 
 		job_list = []
 		if j.has_key('positions'):
@@ -286,7 +308,7 @@ class PostLoginPage(webapp2.RequestHandler):
 			logging.error(eDate)
 			jobdb = dbmodels.Job.all().filter('jobkey = ', jobkey).get()
 			if not jobdb:
-				jobdb = dbmodels.Job(title=title, person=person, company=company, sdate = sDate, edate=eDate, jobkey=jobkey)
+				jobdb = dbmodels.Job(title=title, person=person, company=company, person_linkedin_id = person.linkedin_id, company_id = company.company_id, sdate = sDate, edate=eDate, jobkey=jobkey)
 				jobdb.put()
 			#print '%s - %s (%s) %s %s' %(company_name, company_industry, company_id, company_size, company_type)
 			#print '%s (%s - %s) %s \n' %(title, sDate, eDate, isCurrent)
@@ -311,6 +333,8 @@ class InviteOnly(webapp2.RequestHandler) :
 class RealJD(webapp2.RequestHandler) :
 	def get(self, job_id):
 		page = self.request.get("page")
+		if job_id[0] == "/":
+			job_id = job_id[1:]
 		job = getJob(job_id)
 		if not job:
 			#throw some error
@@ -334,17 +358,22 @@ class RealJD(webapp2.RequestHandler) :
 class RealJDEdit(webapp2.RequestHandler) :
 	def get(self, job_id):
 		page = self.request.get("page")
+		if job_id[0] == "/":
+			job_id = job_id[1:]
 		job = getJob(job_id)
+
 		if not job:
 			# some error here
 			self.redirect("/jobc")
+		p= getPerson(job.person_linkedin_id)
 		if not page:
-			p = job.person
 			school = p.keyschool
 			fullname = p.fname
 			location = p.location
 			title = job.title
-			company = job.company
+			logging.error("companyid")
+			logging.error(job.company_id)
+			company = getCompany(job.company_id).company_name
 			sdate = job.sdate 
 			edate = job.edate
 			function = job.function
@@ -364,13 +393,16 @@ class RealJDEdit(webapp2.RequestHandler) :
 			wc = job.work_culture
 			wsg = job.salary_growth
 			wlb = job.work_life_balance
-
+			fixed_salary = job.fixed_salary
+			self.response.out.write(render_str("jd2.html", wopcheck = wop, iq=iq, eo=eo, abasecheck=alum_base, wccheck = wc, wsgcheck=wsg,stockcheck = stock, wlbcheck = wlb,  fsalary=fixed_salary))
         #else:
 			# some exception code here
 		#	self.redirect("/jobc")
 
 	def post(self, job_id) :
 		page = self.request.get("page")
+		if job_id[0] == "/":
+			job_id = job_id[1:]
 		job = getJob(job_id)
 		if not job :
 			#some error handling here
@@ -385,7 +417,9 @@ class RealJDEdit(webapp2.RequestHandler) :
 			job.jlove = self.request.get("jlove")
 			job.jhate = self.request.get("jhate")
 			job.put()
-			self.response.out.write(render_str("jd2.html"))	
+			url = "/jobc/realjd/_edit/"+job_id+"?page=1"
+			#logging.error("url: " + url)
+			self.redirect(url)
 		elif page == "1":
 			job.work_opportunity = self.request.get("wop")
 			job.work_culture = self.request.get("wc")
@@ -399,8 +433,10 @@ class RealJDEdit(webapp2.RequestHandler) :
 			job.interview_question = self.request.get("iq")
 			job.exit_option = self.request.get("eo")
 			job.put()
-			updatejob(job.jobkey, job)
-			self.redirec("/jobc/"+job_id)
+			#updatejob(job.jobkey, job)
+			url = "/jobc/realjd/"+job_id
+			logging.error("url: " + url)
+			self.redirect(url)
 		else:
 			#some error handling here
 			# either redirect to first page

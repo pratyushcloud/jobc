@@ -19,6 +19,19 @@
             Work Opportunity at firm
           </td>
           <td>
+            {%set wopcheck1 = ''%}
+            {%set wopcheck2 = ''%}
+            {%set wopcheck3 = ''%}
+            {%set wopcheck4 = ''%}
+            {%if wopcheck == "Excellent"%}
+            {%set wopcheck1 = 'checked'%}
+            {%elif wopcheck == "Good"%}
+            {%set wopcheck2 = 'checked'%}
+            {%elif wopcheck == "OK"%}
+            {%set wopcheck3 = 'checked'%}
+            {%elif wopcheck == "Notok"%}
+            {%set wopcheck4 = 'checked'%}
+            {% endif %}
             <input type="radio" name="wop" value="Excellent" {{wopcheck1}}>Excellent
             <input type="radio" name="wop" value="Good" {{wopcheck2}}>Good
             <input type="radio" name="wop" value="Ok" {{wopcheck3}}> OK
@@ -30,6 +43,19 @@
             Work Culture
           </td>
           <td>
+            {%set wccheck1 = ''%}
+            {%set wccheck2 = ''%}
+            {%set wccheck3 = ''%}
+            {%set wccheck4 = ''%}
+            {%if wccheck == "Excellent"%}
+            {%set wccheck1 = 'checked'%}
+            {%elif wccheck == "Good"%}
+            {%set wccheck2 = 'checked'%}
+            {%elif wccheck == "OK"%}
+            {%set wccheck3 = 'checked'%}
+            {%elif wccheck == "Notok"%}
+            {%set wccheck4 = 'checked'%}
+            {% endif %}
             <input type="radio" name="wc" value="Excellent" {{wccheck1}}>Excellent
             <input type="radio" name="wc" value="Good" {{wcpcheck2}}>Good
             <input type="radio" name="wc" value="Ok" {{wcpcheck3}}> OK
@@ -42,6 +68,19 @@
             Salary Growth
           </td>
           <td>
+            {%set wsgcheck1 = ''%}
+            {%set wsgcheck2 = ''%}
+            {%set wsgcheck3 = ''%}
+            {%set wsgcheck4 = ''%}
+            {%if wsgcheck == "Excellent"%}
+            {%set wsgcheck1 = 'checked'%}
+            {%elif wsgcheck == "Good"%}
+            {%set wsgcheck2 = 'checked'%}
+            {%elif wsgcheck == "OK"%}
+            {%set wsgcheck3 = 'checked'%}
+            {%elif wsgcheck == "Notok"%}
+            {%set wsgcheck4 = 'checked'%}
+            {% endif %}
             <input type="radio" name="wsg" value="Excellent" {{wsgcheck1}}>Excellent
             <input type="radio" name="wsg" value="Good" {{wsgcheck2}}>Good
             <input type="radio" name="wsg" value="Ok" {{wsgcheck3}}> OK
@@ -53,6 +92,19 @@
             Work Life Balance
           </td>
           <td>
+            {%set wlbcheck1 = ''%}
+            {%set wlbcheck2 = ''%}
+            {%set wlbcheck3 = ''%}
+            {%set wlbcheck4 = ''%}
+            {%if wlbcheck == "Excellent"%}
+            {%set wlbcheck1 = 'checked'%}
+            {%elif wlbcheck == "Good"%}
+            {%set wlbcheck2 = 'checked'%}
+            {%elif wlbcheck == "OK"%}
+            {%set wlbcheck3 = 'checked'%}
+            {%elif wlbcheck == "Notok"%}
+            {%set wlbcheck4 = 'checked'%}
+            {% endif %}
             <input type="radio" name="wlb" value="Excellent" {{wlbcheck1}}>Excellent
             <input type="radio" name="wlb" value="Good" {{wlbcheck2}}>Good
             <input type="radio" name="wlb" value="Ok" {{wlbcheck3}}> OK
@@ -94,6 +146,13 @@
             	Stock Option
           	</td>
         	<td>
+              {%set stockcheck1 = ''%}
+              {%set stockcheck2 = ''%}
+              {%if stockcheck == 'Yes'%}
+              {%set stockcheck1 = 'Selected'%}
+              {%elif stockcheck == 'No'%}
+              {%set stockcheck2 = 'Selected'%}
+              {% endif %}
             	<input type="radio" name="stock" value="Yes" {{stockcheck1}}>Yes
             	<input type="radio" name="stock" value="No" {{stockcheck2}}>No
           	</td>
@@ -103,6 +162,16 @@
             	Alumni Base
           	</td>
         	<td>
+              {%set abasecheck1 = ''%}
+              {%set abasecheck2 = ''%}
+              {%set abasecheck3 = ''%}
+              {%if abasecheck == 'Strong'%}
+              {%set abasecheck1 = 'Selected'%}
+              {%elif abasecheck == 'Moderate'%}
+              {%set abasecheck2 = 'Selected'%} 
+              {%elif abasecheck == 'Weak'%}
+              {%set abasecheck3 = 'Selected'%} 
+              {% endif %}            
             	<input type="radio" name="abase" value="Strong" {{abasecheck1}}>Strong
             	<input type="radio" name="abase" value="Moderate" {{abasecheck2}}>Moderate
             	<input type="radio" name="abase" value="Weak" {{abasecheck3}}>Weak
