@@ -25,6 +25,8 @@ class Person(db.Model):
 		location = db.StringProperty(default="")
 		picture = db.BlobProperty(default=None)
 		keyschool = db.ReferenceProperty(School, collection_name='person_keyschool')
+		public_profile_url = db.StringProperty(default="")
+		picture_url = db.StringProperty(default="")
 
 class Job(db.Model):
 	person = db.ReferenceProperty(Person,collection_name='person_job')

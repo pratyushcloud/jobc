@@ -20,9 +20,20 @@
             Post as
           </td>
           <td>
-            <input type="radio" name="postas" value="alum" {{authorcheck1}}>{{alumcallname}}
-            <input type="radio" name="postas" value="anonymous" {{authorcheck2}}>Anonymous
-            <input type="radio" name="postas" value="fullname" {{authorcheck3}}>{{fullname}}
+            {%set authorcheck1 = ''%}
+            {%set authorcheck2 = ''%}
+            {%set authorcheck3 = ''%}
+            {% if authorcheck == "self"%}
+            {% set authorcheck1 = "checked"%}
+            {%elif authorcheck == "alum" %}
+            {% set authorcheck2 ="checked"%}
+            {% elif authorcheck == "anonymous" %}
+            {%set authorchek3 ="checked"%}
+            {%endif%}
+            <input type="radio" name="postas" value="self" {{authorcheck1}}>{{oneself}}
+            <input type="radio" name="postas" value="alum" {{authorcheck2}} >{{schoolname}}
+            <input type="radio" name="postas" value="anonymous" {{authorcheck3}}>Anonymous
+
           </td>
         </tr>
 
@@ -31,7 +42,7 @@
             Job Title
           </td>
           <td>
-            <input type="text" name="title" value="{{title}}">
+            <input type="text" size = "50" name="title" value="{{title}}">
           </td>
         </tr>
         <tr>
@@ -39,44 +50,47 @@
             Company
           </td>
           <td>
-            <input type="text" name="company" value="{{company}}">
+            <input type="text" size = "30" name="company" value="{{company}}">
           </td>
         </tr>
+        <div>
         <tr>
+          <div class="alphatext">
           <td class="label">
             From:
           </td>
           <td>
-            <input type="text" name="sdate" value="{{sdate}}">
+            <input type="text" size = "15" name="sdate" value="{{sdate}}" style="float:left">
           </td>
-          <td> to </td>
+          <td class = "label" {padding-left:50px;}>to </td> 
           <td>
-            <input type="text" name="edate" value="{{edate}}">
+            <input type="text" size = "15" name="edate" value="{{edate}}">
           </td>
         </tr>
+      </div>
         <tr>
           <td class="label">
             Function:
           </td>
           <td>
-          <select>
+          <select name="jobfunction">
             {%set fselected1 = ''%}
             {%set fselected2 = ''%}
             {%set fselected3 = ''%}
             {%set fselected4 = ''%}
             {%set fselected5 = ''%}
             {%set fselected6 = ''%}
-            {% if function == "Marketing"%}
+            {% if jfunction == "Marketing"%}
             {% set fselected1 = "selected"%}
-            {% elif function == "Sales"%}
+            {% elif jfunction == "Sales"%}
             {% set fselected2 = "selected"%}
-            {% elif function == "Finance"%}
+            {% elif jfunction == "Finance"%}
             {% set fselected3 = "selected"%}
-            {% elif function == "Consulting"%}
+            {% elif jfunction == "Consulting"%}
             {% set fselected4 = "selected"%}
-            {% elif function == "IT"%}
+            {% elif jfunction == "IT"%}
             {% set fselected5 = "selected"%}
-            {% elif function == "Supply Chain"%}
+            {% elif jfunction == "Supply Chain"%}
             {% set fselected6 = "selected"%}
             {% endif %}
             <option value="Marketing" {{fselected1}}>Marketing</option>

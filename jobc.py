@@ -53,7 +53,7 @@ def getJob(jobkey):
 		jobs = db.GqlQuery("SELECT * FROM Job where jobkey ='%s'"%jobkey)
 		jobs.fetch(1)
 		for j in jobs:
-			memcache.set(jobkey, j)
+			setJob(jobkey=jobkey, job=j)
 	return memcache.get(jobkey)
 
 def getPerson(linkedin_id):
@@ -71,6 +71,10 @@ def getCompany(company_id):
 		for c in companies:
 			memcache.set(str(company_id), c)
 	return memcache.get(str(company_id))
+
+def setJob(jobkey, job):
+	#TODO make checks here on validity of jobkey or job variable
+	memcache.set(jobkey, job)
 
 class MainPage(webapp2.RequestHandler) :
 	request_token = None	
@@ -111,12 +115,6 @@ class PostLoginPage(webapp2.RequestHandler):
 		#resp, content = client.request(people_info_url, "GET", "")
 		resp, content = client.request(access_token_url, "POST", "")
 		
-		#self.response.out.write("resp")
-		#self.response.out.write(resp)
-		#self.response.out.write("content")
-		#self.response.out.write(content)
-		#self.response.out.write("<br>")
-		
 		access_token = dict(urlparse.parse_qsl(content))
 		
 		# API call to retrieve profile using access token 
@@ -125,22 +123,9 @@ class PostLoginPage(webapp2.RequestHandler):
 		
 		self.response.out.write("<a href=\"http://localhost:8080/jobc\">Home Page</a> <br><br>")
 		resp1, content = client.request("http://api.linkedin.com/v1/people/~")
-		#self.response.out.write(content)
-		#self.response.out.write("<br>")
 		
-
-		#self.response.out.write("resp")
-		#self.response.out.write(resp)
-		
-		
-		#resp2, content = client.request("http://api.linkedin.com/v1/people/~/connections?count=10")
-		#self.response.out.write(content)
-		#self.response.out.write("<br><br>")
-		
-		url = "http://api.linkedin.com/v1/people/~:(id,first-name,last-name,email-address,headline,picture-url,location:(name),industry,num-connections,positions:(title,start-date,end-date,is-current,company),educations:(school-name,field-of-study,start-date,end-date,degree),date-of-birth)?format=json"
-
+		url = "http://api.linkedin.com/v1/people/~:(id,first-name,last-name,email-address,headline,public-profile-url,picture-url,location:(name),industry,num-connections,positions:(title,start-date,end-date,is-current,company),educations:(school-name,field-of-study,start-date,end-date,degree),date-of-birth)?format=json"
 		resp3, content = client.request(url)
-		#self.response.out.write(content)
 		
 		j = json.loads(content)
 		nconnection = int(j['numConnections'])
@@ -151,6 +136,7 @@ class PostLoginPage(webapp2.RequestHandler):
 		industry = ''
 		location = ''
 		pictureUrl = ''
+		publicUrl = '' 
 
 		if j.has_key('firstName'):
 			fname = j['firstName']
@@ -166,20 +152,37 @@ class PostLoginPage(webapp2.RequestHandler):
 				location = j['location']['name']
 		if j.has_key('pictureUrl'):
 			pictureUrl = j['pictureUrl']
+		if j.has_key('public-profile-url'):
+			publicUrl = j['public-profile-url']
 
-		logging.error("pictureUrl = " +pictureUrl)
+		logging.error("publicUrl = " +publicUrl)
 		if (nconnection < 10) :
 			self.redirect("/jobc/inviteonly/?fname="+fname)
 		
 		person = dbmodels.Person.all().filter('linkedin_id = ', linkedin_id).get()
-		if not person:
-			person = dbmodels.Person(fname=fname, lname = lname, linkedin_id=linkedin_id, industry=industry, location=location)
-			#logging.error("pictureUrl " + pictureUrl)
+
+		if person:
+			#check if there are any updates in fname, lname, picture_url, public_profile_url
+			hasChanged = False
+			if person.fname != fname:
+				person.fname = fname
+				hasChanged = True
+			elif person.lname != lname:
+				person.lname = lname
+				hasChanged = True
+			elif person.picture_url != pictureUrl:
+				person.picture_url = pictureUrl
+				hasChanged = True
+			elif person.public_profile_url != publicUrl:
+				person.public_profile_url = publicUrl
+				hasChanged = True
+			if hasChanged:
+				person.put()
+		if not person: # TODO how to check if something has changed in the profile
+			person = dbmodels.Person(fname=fname, lname = lname, linkedin_id=linkedin_id, industry=industry, location=location, picture_url=pictureUrl, public_profile_url=publicUrl)
 			if pictureUrl and pictureUrl != '':
 				person.picture = db.Blob(urlfetch.Fetch(pictureUrl).content)
 			person.put()
-
-
 
 		school_list = []
 
@@ -238,7 +241,6 @@ class PostLoginPage(webapp2.RequestHandler):
 		if (eyear_validSchool - syear_validSchool <= 1):
 			# Guy must have done certification or short term course
 			self.redirect("/jobc/inviteonly/?fname="+fname)
-
 
 
 		job_list = []
@@ -339,9 +341,16 @@ class RealJD(webapp2.RequestHandler) :
 		if not job:
 			#throw some error
 			self.redirect("/jobc")
-		title = job.title
+		title = job.title 
+		company = getCompany(job.company_id)
+		companyname = company.company_name
+		companyurl = "http://www.linkedin.com/company/" + str(job.company_id)
 		author = job.posted_by_text
-		date = job.modify_date
+		if author == "self":
+			person = getPerson(job.person_linkedin_id)
+			author = person.fname + " (Alumnus of " + person.keyschool.schoolname+")"
+			authorurl = "http://www.linkedin.com/profile/view?id="+person.linkedin_id
+		date = job.modify_date.strftime('%m/%Y')
 		jd = job.dayinoffice
 		salary = "Fixed: " + job.fixed_salary + " Variable: Yearly Bonus:" + job.yearly_bonus+" Joining Bonus:" + job.joining_bonus + " Stock: " + job.stock 
 		jlove = job.jlove
@@ -352,7 +361,7 @@ class RealJD(webapp2.RequestHandler) :
 		wc = job.work_culture
 		wsg = job.salary_growth
 		wlb = job.work_life_balance
-		self.response.out.write(render_str("onejd.html", title=title, author=author, date=date, jd=jd, salary=salary, jlove = jlove, jhate= jhate,
+		self.response.out.write(render_str("onejd.html", title=title, author=author, authorurl = authorurl, companyname=companyname, companyurl=companyurl, date=date, jd=jd, salary=salary, jlove = jlove, jhate= jhate,
 			iq = iq, eo = eo, wop = wop, wc = wc, wsg = wsg, wlb=wlb))
 
 class RealJDEdit(webapp2.RequestHandler) :
@@ -367,21 +376,27 @@ class RealJDEdit(webapp2.RequestHandler) :
 			self.redirect("/jobc")
 		p= getPerson(job.person_linkedin_id)
 		if not page:
-			school = p.keyschool
+			school = "Alum of " + p.keyschool.schoolname
 			fullname = p.fname
 			location = p.location
 			title = job.title
 			logging.error("companyid")
 			logging.error(job.company_id)
 			company = getCompany(job.company_id).company_name
-			sdate = job.sdate 
-			edate = job.edate
-			function = job.function
+			sdate = job.sdate
+			authorcheck = job.posted_by_text
+			if (authorcheck == ""):
+				authorcheck = "alum"
+			logging.error("authorcheck " + authorcheck)
+			if sdate:
+				sdate = job.sdate.strftime('%m/%Y')
+			edate = job.edate.strftime('%m/%Y')
 			jd = job.dayinoffice
 			jlove = job.jlove
 			jhate = job.jhate
-			function = job.function
-			self.response.out.write(render_str("jd.html", fullname= fullname, location=location, school=school, title=title, company=company, sdate = sdate, edate = edate, jhate = jhate, jlove=jlove, jd = jd, function = function))
+			jfunction = job.function
+			self.response.out.write(render_str("jd.html", authorcheck = authorcheck, schoolname=school,oneself= fullname, location=location, 
+				school=school, title=title, company=company, sdate = sdate, edate = edate, jhate = jhate, jlove=jlove, jd = jd, jfunction = jfunction))
 		elif page == "1":
 			iq = job.interview_question
 			eo = job.exit_option
@@ -394,7 +409,9 @@ class RealJDEdit(webapp2.RequestHandler) :
 			wsg = job.salary_growth
 			wlb = job.work_life_balance
 			fixed_salary = job.fixed_salary
-			self.response.out.write(render_str("jd2.html", wopcheck = wop, iq=iq, eo=eo, abasecheck=alum_base, wccheck = wc, wsgcheck=wsg,stockcheck = stock, wlbcheck = wlb,  fsalary=fixed_salary))
+			logging.error("work culter = " + wc)
+			self.response.out.write(render_str("jd2.html", wopcheck = wop, iq=iq, eo=eo, abasecheck=alum_base, wccheck = wc, wsgcheck=wsg,
+				stockcheck = stock, wlbcheck = wlb,  fsalary=fixed_salary))
         #else:
 			# some exception code here
 		#	self.redirect("/jobc")
@@ -408,14 +425,19 @@ class RealJDEdit(webapp2.RequestHandler) :
 			#some error handling here
 			self.redirect("/jobc")
 		if not page:
+			logging.error(self.request.arguments())
+			logging.error("jobf "+ self.request.get("jobfunction"))
 			job.location = self.request.get("location")
 			job.title = self.request.get("title")
 			#sdate = job.sdate 
 			#edate = job.edate
-			job.function = self.request.get("function")
-			job.dayinoffice = self.request.get("dayinoffice")
+			job.function = self.request.get("jobfunction")
+			job.dayinoffice = self.request.get("jd")
 			job.jlove = self.request.get("jlove")
 			job.jhate = self.request.get("jhate")
+			job.posted_by_text = self.request.get("postas")
+			#logging.error("postas " + self.request.get("postas"))
+			setJob(jobkey=job.jobkey, job = job)
 			job.put()
 			url = "/jobc/realjd/_edit/"+job_id+"?page=1"
 			#logging.error("url: " + url)
@@ -432,8 +454,8 @@ class RealJDEdit(webapp2.RequestHandler) :
 			job.alum_base = self.request.get("abase")
 			job.interview_question = self.request.get("iq")
 			job.exit_option = self.request.get("eo")
+			setJob(jobkey=job.jobkey, job=job)
 			job.put()
-			#updatejob(job.jobkey, job)
 			url = "/jobc/realjd/"+job_id
 			logging.error("url: " + url)
 			self.redirect(url)

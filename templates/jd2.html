@@ -57,8 +57,8 @@
             {%set wccheck4 = 'checked'%}
             {% endif %}
             <input type="radio" name="wc" value="Excellent" {{wccheck1}}>Excellent
-            <input type="radio" name="wc" value="Good" {{wcpcheck2}}>Good
-            <input type="radio" name="wc" value="Ok" {{wcpcheck3}}> OK
+            <input type="radio" name="wc" value="Good" {{wccheck2}}>Good
+            <input type="radio" name="wc" value="Ok" {{wccheck3}}> OK
             <input type="radio" name="wc" value="Notok" {{wccheck4}}>Not Ok
           </td>
         </tr>
@@ -149,9 +149,9 @@
               {%set stockcheck1 = ''%}
               {%set stockcheck2 = ''%}
               {%if stockcheck == 'Yes'%}
-              {%set stockcheck1 = 'Selected'%}
+              {%set stockcheck1 = 'checked'%}
               {%elif stockcheck == 'No'%}
-              {%set stockcheck2 = 'Selected'%}
+              {%set stockcheck2 = 'checked'%}
               {% endif %}
             	<input type="radio" name="stock" value="Yes" {{stockcheck1}}>Yes
             	<input type="radio" name="stock" value="No" {{stockcheck2}}>No
@@ -166,11 +166,11 @@
               {%set abasecheck2 = ''%}
               {%set abasecheck3 = ''%}
               {%if abasecheck == 'Strong'%}
-              {%set abasecheck1 = 'Selected'%}
+              {%set abasecheck1 = 'checked'%}
               {%elif abasecheck == 'Moderate'%}
-              {%set abasecheck2 = 'Selected'%} 
+              {%set abasecheck2 = 'checked'%} 
               {%elif abasecheck == 'Weak'%}
-              {%set abasecheck3 = 'Selected'%} 
+              {%set abasecheck3 = 'checked'%} 
               {% endif %}            
             	<input type="radio" name="abase" value="Strong" {{abasecheck1}}>Strong
             	<input type="radio" name="abase" value="Moderate" {{abasecheck2}}>Moderate
@@ -182,7 +182,7 @@
             Interview Questions/ Experience and Answers
           </td>
           <td>
-            <textarea name="iq" rows="10" cols="50" value=""></textarea>
+            <textarea name="iq" rows="10" cols="50" value="">{{iq}}</textarea>
           </td>
         </tr>
         <tr>
@@ -190,7 +190,7 @@
             Exit Options
           </td>
           <td>
-            <textarea name="eo" rows="5" cols="50" value=""></textarea>
+            <textarea name="eo" rows="5" cols="50" value="">{{eo}}</textarea>
           </td>
         </tr>
       </table>
