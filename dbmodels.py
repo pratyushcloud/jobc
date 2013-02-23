@@ -7,6 +7,8 @@ def jobkey(linkedin_id, company_id, eDate) :
 	#my linkedin id is a-XWIKlbew  pattern of 
 	return encrypt.make_hash(str(linkedin_id)+'|'+str(company_id)+'|'+eDate.strftime("%Y-%m-%d"))
 
+#def content_hash(fname, lname, industry, location)
+
 class Company (db.Model):
 	company_id = db.IntegerProperty(required=True)
 	company_name = db.StringProperty(required=True)
@@ -27,6 +29,7 @@ class Person(db.Model):
 		keyschool = db.ReferenceProperty(School, collection_name='person_keyschool')
 		public_profile_url = db.StringProperty(default="")
 		picture_url = db.StringProperty(default="")
+		#content_hash=db.StringProperty(required=True)
 
 class Job(db.Model):
 	person = db.ReferenceProperty(Person,collection_name='person_job')

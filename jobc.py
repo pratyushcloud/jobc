@@ -20,8 +20,6 @@ from google.appengine.ext import db
 from google.appengine.api import memcache
 
 
-consumer_key    =   'gge7se1gxi53'
-consumer_secret =   'Vlun3FqAAu7H5Yq3'
 validschools = ['Indian Institute of Management, Calcutta']
 
 #oauth_token = 'f0087255-7077-491f-b89c-561baf0d36ea'
@@ -40,9 +38,11 @@ authorize_url = 'https://api.linkedin.com/uas/oauth/authorize'
 access_token_url = 'https://api.linkedin.com/uas/oauth/accessToken'
 people_info_url = "http://api.linkedin.com/v1/people/~"
 		
+consumer_key    =   'gge7se1gxi53' #mentorme api
+consumer_secret =   'Vlun3FqAAu7H5Yq3'
+#consumer_key= 'yfn26ez21xqb' #localhost
+#consumer_secret = '8k478hHqjam3273z' #localhost
 
-consumer = None
-client = None
 
 def render_str(template, **params):
     t = jinja_env.get_template(template)
@@ -76,52 +76,69 @@ def setJob(jobkey, job):
 	#TODO make checks here on validity of jobkey or job variable
 	memcache.set(jobkey, job)
 
+
 class MainPage(webapp2.RequestHandler) :
-	request_token = None	
-	def get(self) :
-		self.response.out.write(render_str("login.html"))
-	
-	def post(self):
-		logging.error("MainPage Post")
-		url = "%s?oauth_token=%s" % (authorize_url, request_token['oauth_token'])
-		#print "Go to the following link in your browser:"
- 		self.redirect(url)
- 
-	def initialize(self, *a, **kw):
-		global request_token, consumer, client
 		
+	def initialize(self, *a, **kw):
 		webapp2.RequestHandler.initialize(self, *a, **kw)
+		logging.error("MainPage initialize")
+		#self.setTokenAndSecret()
+		#if not oauth_token:
+		#	self.setTokenAndSecret()
+
+	def setTokenAndSecret(self):
+		logging.error("in MainPage setTokenAndSecret")
 		consumer = oauth.Consumer(consumer_key, consumer_secret)
 		client = oauth.Client(consumer)
 		resp, content = client.request(request_token_url, "POST")
 		if resp['status'] != '200':
+			logging.error("linkedin exception")
 			raise Exception("Invalid response %s." % resp['status'])
 			 
 		request_token = dict(urlparse.parse_qsl(content))
-				
-		logging.error("Request Token:")
-		logging.error("    - oauth_token        = %s" % request_token['oauth_token'])
-		logging.error("    - oauth_token_secret = %s" % request_token['oauth_token_secret']) 
+		oauth_token = request_token['oauth_token']
+		oauth_token_secret = request_token['oauth_token_secret']
+		memcache.set(oauth_token, oauth_token_secret)
+		return (oauth_token, oauth_token_secret)
 
-
-class PostLoginPage(webapp2.RequestHandler):
 	def get(self) :
-		token = oauth.Token(request_token['oauth_token'], request_token['oauth_token_secret'])
+		#global request_token, consumer, client, oauth_token, oauth_token_secret
+	  logging.error("MainPage Get")
+	  referer_url = self.request.headers.get('Referer')
+	  logging.error("referer_url")
+	  logging.error (referer_url)
+	  oauth_token = self.request.get("oauth_token")
+	  logging.error("oauth_token")
+	  logging.error(oauth_token)
+
+	  if not oauth_token:
+			#self.setTokenAndSecret()
+			self.response.out.write(render_str("login.html"))
+	  else:
+		logging.error("consumer_key:"+consumer_key + " consumer_secret:" + consumer_secret )
+		oauth_token_secret = memcache.get(oauth_token)
 		oauth_verifier = self.request.get('oauth_verifier')
+		logging.error("verifier: " + oauth_verifier)
+		logging.error("oauth_token:"+oauth_token)
+		logging.error("oauth_token_secret:" + oauth_token_secret)
+		
+		consumer = oauth.Consumer(consumer_key, consumer_secret)
+		token = oauth.Token(oauth_token, oauth_token_secret)
 		token.set_verifier(oauth_verifier)
 		
 		client = oauth.Client(consumer, token)
 			 
 		#resp, content = client.request(people_info_url, "GET", "")
-		resp, content = client.request(access_token_url, "POST", "")
+		resp, content = client.request(access_token_url, "POST")
 		
 		access_token = dict(urlparse.parse_qsl(content))
-		
+		logging.error(access_token)
+
 		# API call to retrieve profile using access token 
 		token = oauth.Token(key=access_token['oauth_token'],secret=access_token['oauth_token_secret'])
 		client = oauth.Client(consumer, token)
 		
-		self.response.out.write("<a href=\"http://localhost:8080/jobc\">Home Page</a> <br><br>")
+		#self.response.out.write("<a href=\"http://localhost:8080/jobc\">Home Page</a> <br><br>")
 		resp1, content = client.request("http://api.linkedin.com/v1/people/~")
 		
 		url = "http://api.linkedin.com/v1/people/~:(id,first-name,last-name,email-address,headline,public-profile-url,picture-url,location:(name),industry,num-connections,positions:(title,start-date,end-date,is-current,company),educations:(school-name,field-of-study,start-date,end-date,degree),date-of-birth)?format=json"
@@ -320,6 +337,21 @@ class PostLoginPage(webapp2.RequestHandler):
 			post_mba_jobs.append((pjob.title, pjob.company.company_name,pjob.jobkey))
 		njobs= len(post_mba_jobs)
 		self.response.out.write(render_str("alumpage.html", fullname= fname, pictureUrl= pictureUrl,njobs=njobs, job=post_mba_jobs))
+
+	def post(self):
+		logging.error("MainPage Post")
+		referer_url = self.request.headers.get('Referer')
+		logging.error(referer_url)
+		#if not oauth_token:
+		(oauth_token, oauth_token_secret) = self.setTokenAndSecret()
+		url = "%s?oauth_token=%s" % (authorize_url, oauth_token)
+
+ 		self.redirect(url)
+
+class PostLoginPage(webapp2.RequestHandler):
+	def get(self) :
+		global dummy, oauth_token, oauth_token_secret
+
    
 #movie.picture = db.Blob(urlfetch.Fetch(picture_url).content)
 
@@ -346,6 +378,7 @@ class RealJD(webapp2.RequestHandler) :
 		companyname = company.company_name
 		companyurl = "http://www.linkedin.com/company/" + str(job.company_id)
 		author = job.posted_by_text
+		authorurl = ''
 		if author == "self":
 			person = getPerson(job.person_linkedin_id)
 			author = person.fname + " (Alumnus of " + person.keyschool.schoolname+")"
@@ -409,7 +442,7 @@ class RealJDEdit(webapp2.RequestHandler) :
 			wsg = job.salary_growth
 			wlb = job.work_life_balance
 			fixed_salary = job.fixed_salary
-			logging.error("work culter = " + wc)
+			#logging.error("work culter = " + wc)
 			self.response.out.write(render_str("jd2.html", wopcheck = wop, iq=iq, eo=eo, abasecheck=alum_base, wccheck = wc, wsgcheck=wsg,
 				stockcheck = stock, wlbcheck = wlb,  fsalary=fixed_salary))
         #else:
@@ -466,4 +499,4 @@ class RealJDEdit(webapp2.RequestHandler) :
 
 
 		
-			
+		
