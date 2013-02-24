@@ -9,6 +9,34 @@ def jobkey(linkedin_id, company_id, eDate) :
 
 #def content_hash(fname, lname, industry, location)
 
+def getJob(jobkey):
+	if not memcache.get(jobkey):
+		jobs = db.GqlQuery("SELECT * FROM Job where jobkey ='%s'"%jobkey)
+		jobs.fetch(1)
+		for j in jobs:
+			setJob(jobkey=jobkey, job=j)
+	return memcache.get(jobkey)
+
+def getPerson(linkedin_id):
+	if not memcache.get(linkedin_id):
+		persons = db.GqlQuery("SELECT * FROM Person where linkedin_id ='%s'"%linkedin_id)
+		persons.fetch(1)
+		for p in persons:
+			memcache.set(linkedin_id, p)
+	return memcache.get(linkedin_id)
+
+def getCompany(company_id):
+	if not memcache.get(str(company_id)):
+		companies = db.GqlQuery("SELECT * FROM Company where company_id =%s"%company_id)
+		companies.fetch(1)
+		for c in companies:
+			memcache.set(str(company_id), c)
+	return memcache.get(str(company_id))
+
+def setJob(jobkey, job):
+	#TODO make checks here on validity of jobkey or job variable
+	memcache.set(jobkey, job)
+
 class Company (db.Model):
 	company_id = db.IntegerProperty(required=True)
 	company_name = db.StringProperty(required=True)
@@ -29,6 +57,9 @@ class Person(db.Model):
 		keyschool = db.ReferenceProperty(School, collection_name='person_keyschool')
 		public_profile_url = db.StringProperty(default="")
 		picture_url = db.StringProperty(default="")
+		access_token = db.StringProperty(default="")
+		access_token_secret = db.StringProperty(default="")
+		oauth_expires_in = db.IntegerProperty(default=0)
 		#content_hash=db.StringProperty(required=True)
 
 class Job(db.Model):

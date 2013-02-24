@@ -4,31 +4,16 @@ import logging
 import urlparse 
 import time, os
 import sys
-import json
-import datetime
 
+import linkedinparser
 import dbmodels
-
-from google.appengine.api import urlfetch
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "lib"))
 
 import oauth2 as oauth
 import httplib2
 
-from google.appengine.ext import db
 from google.appengine.api import memcache
-
-
-validschools = ['Indian Institute of Management, Calcutta']
-
-#oauth_token = 'f0087255-7077-491f-b89c-561baf0d36ea'
-#oauth_token_secret='f3dde1ad-9d9e-44d4-a259-04bbfdbf0303'
-
-#consumer_key      =   'abcd123456'
-#consumer_secret  =   'efgh987654'
-
-# Use your API key and secret to instantiate consumer object
 
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir), autoescape = True)
@@ -38,53 +23,21 @@ authorize_url = 'https://api.linkedin.com/uas/oauth/authorize'
 access_token_url = 'https://api.linkedin.com/uas/oauth/accessToken'
 people_info_url = "http://api.linkedin.com/v1/people/~"
 		
+# Use your API key and secret to instantiate consumer object
 consumer_key    =   'gge7se1gxi53' #mentorme api
 consumer_secret =   'Vlun3FqAAu7H5Yq3'
 #consumer_key= 'yfn26ez21xqb' #localhost
 #consumer_secret = '8k478hHqjam3273z' #localhost
 
-
 def render_str(template, **params):
     t = jinja_env.get_template(template)
     return t.render(params)
-
-def getJob(jobkey):
-	if not memcache.get(jobkey):
-		jobs = db.GqlQuery("SELECT * FROM Job where jobkey ='%s'"%jobkey)
-		jobs.fetch(1)
-		for j in jobs:
-			setJob(jobkey=jobkey, job=j)
-	return memcache.get(jobkey)
-
-def getPerson(linkedin_id):
-	if not memcache.get(linkedin_id):
-		persons = db.GqlQuery("SELECT * FROM Person where linkedin_id ='%s'"%linkedin_id)
-		persons.fetch(1)
-		for p in persons:
-			memcache.set(linkedin_id, p)
-	return memcache.get(linkedin_id)
-
-def getCompany(company_id):
-	if not memcache.get(str(company_id)):
-		companies = db.GqlQuery("SELECT * FROM Company where company_id =%s"%company_id)
-		companies.fetch(1)
-		for c in companies:
-			memcache.set(str(company_id), c)
-	return memcache.get(str(company_id))
-
-def setJob(jobkey, job):
-	#TODO make checks here on validity of jobkey or job variable
-	memcache.set(jobkey, job)
-
 
 class MainPage(webapp2.RequestHandler) :
 		
 	def initialize(self, *a, **kw):
 		webapp2.RequestHandler.initialize(self, *a, **kw)
 		logging.error("MainPage initialize")
-		#self.setTokenAndSecret()
-		#if not oauth_token:
-		#	self.setTokenAndSecret()
 
 	def setTokenAndSecret(self):
 		logging.error("in MainPage setTokenAndSecret")
@@ -102,17 +55,10 @@ class MainPage(webapp2.RequestHandler) :
 		return (oauth_token, oauth_token_secret)
 
 	def get(self) :
-		#global request_token, consumer, client, oauth_token, oauth_token_secret
 	  logging.error("MainPage Get")
-	  referer_url = self.request.headers.get('Referer')
-	  logging.error("referer_url")
-	  logging.error (referer_url)
 	  oauth_token = self.request.get("oauth_token")
-	  logging.error("oauth_token")
-	  logging.error(oauth_token)
 
 	  if not oauth_token:
-			#self.setTokenAndSecret()
 			self.response.out.write(render_str("login.html"))
 	  else:
 		logging.error("consumer_key:"+consumer_key + " consumer_secret:" + consumer_secret )
@@ -134,230 +80,31 @@ class MainPage(webapp2.RequestHandler) :
 		access_token = dict(urlparse.parse_qsl(content))
 		logging.error(access_token)
 
+		oauth_expires_in = long(access_token['oauth_expires_in'])
+
 		# API call to retrieve profile using access token 
 		token = oauth.Token(key=access_token['oauth_token'],secret=access_token['oauth_token_secret'])
+		#token = oauth.Token('f2bdafbf-e678-49dc-8930-ec479af8d93b', '5600a5ed-b028-48f1-a3dd-3f9b1f507b52')
 		client = oauth.Client(consumer, token)
 		
-		#self.response.out.write("<a href=\"http://localhost:8080/jobc\">Home Page</a> <br><br>")
-		resp1, content = client.request("http://api.linkedin.com/v1/people/~")
+		#resp1, content = client.request("http://api.linkedin.com/v1/people/~")
 		
 		url = "http://api.linkedin.com/v1/people/~:(id,first-name,last-name,email-address,headline,public-profile-url,picture-url,location:(name),industry,num-connections,positions:(title,start-date,end-date,is-current,company),educations:(school-name,field-of-study,start-date,end-date,degree),date-of-birth)?format=json"
 		resp3, content = client.request(url)
+		logging.error("content:" + content)
+		(person, post_mba_jobs) = linkedinparser.parseContent(content)
 		
-		j = json.loads(content)
-		nconnection = int(j['numConnections'])
-
-		fname = ''
-		lname = '' 
-		linkedin_id = ''
-		industry = ''
-		location = ''
-		pictureUrl = ''
-		publicUrl = '' 
-
-		if j.has_key('firstName'):
-			fname = j['firstName']
-		if j.has_key('lastName'):
-			lname = j['lastName']
-		if j.has_key('id'):
-			linkedin_id = j['id']
-
-		if j.has_key('industry'):
-	 		industry = j['industry']
-		if j.has_key('location'):
-			if j['location'].has_key('name'):
-				location = j['location']['name']
-		if j.has_key('pictureUrl'):
-			pictureUrl = j['pictureUrl']
-		if j.has_key('public-profile-url'):
-			publicUrl = j['public-profile-url']
-
-		logging.error("publicUrl = " +publicUrl)
-		if (nconnection < 10) :
+		if not person:
 			self.redirect("/jobc/inviteonly/?fname="+fname)
 		
-		person = dbmodels.Person.all().filter('linkedin_id = ', linkedin_id).get()
-
-		if person:
-			#check if there are any updates in fname, lname, picture_url, public_profile_url
-			hasChanged = False
-			if person.fname != fname:
-				person.fname = fname
-				hasChanged = True
-			elif person.lname != lname:
-				person.lname = lname
-				hasChanged = True
-			elif person.picture_url != pictureUrl:
-				person.picture_url = pictureUrl
-				hasChanged = True
-			elif person.public_profile_url != publicUrl:
-				person.public_profile_url = publicUrl
-				hasChanged = True
-			if hasChanged:
-				person.put()
-		if not person: # TODO how to check if something has changed in the profile
-			person = dbmodels.Person(fname=fname, lname = lname, linkedin_id=linkedin_id, industry=industry, location=location, picture_url=pictureUrl, public_profile_url=publicUrl)
-			if pictureUrl and pictureUrl != '':
-				person.picture = db.Blob(urlfetch.Fetch(pictureUrl).content)
-			person.put()
-
-		school_list = []
-
-		if j.has_key('educations'):
-			if j['educations'].has_key('values'):
-				school_list = j['educations']['values']
-		#print school_list
-
-		isvalidSchool = False
-		syear_validSchool = 0
-		eyear_validSchool = 0
-		validSchool= None
-		for school in school_list:
-			syear = 0
-			eyear = 0
-			schoolName = ''
-			degree = ''
-			study_field = ''
-			if school.has_key('endDate'):
-				if school['endDate'].has_key('year'):
-					eyear = int(school['endDate']['year'])
-			if school.has_key('startDate'):
-				if school['startDate'].has_key('year'):
-					syear = int(school['startDate']['year'])
-			if school.has_key('degree'):
-				degree = school['degree']
-			if school.has_key('fieldOfStudy'):
-				study_field = school['fieldOfStudy']			
-			if school.has_key('schoolName'):
-				schoolName = school['schoolName']
-				if any(schoolName in s for s in validschools):
-					isvalidSchool = True
-					logging.error("schoolName " + schoolName)
-					schooldb = dbmodels.School.all().filter('schoolname = ', schoolName).get()
-					if not schooldb:
-						schooldb = dbmodels.School(schoolname=schoolName)
-						schooldb.put()
-					validschool = schooldb 
-					person.keyschool = validschool
-					person.put() # not recommended to do double db write
-					education = dbmodels.Education(person=person, school=schooldb, degree=degree, fieldofstudy=study_field, syear=syear, eyear=eyear)
-					# take the minimum year. person might have had two degrees from a school. we take the oldest one
-					if (syear_validSchool >  0 and eyear_validSchool > 0 and syear > 0 and eyear > 0) :
-						if (eyear_validSchool > eyear) :
-								syear_validSchool = syear
-								eyear_validSchool = eyear
-					if (syear_validSchool == 0 and eyear_validSchool == 0) :
-						syear_validSchool = syear
-						eyear_validSchool = eyear
-
-			#print "%s (%s-%s) %s (%s)" %(schoolName, syear, eyear, degree, study_field)
-		
-		if not isvalidSchool:
-			self.redirect("/jobc/inviteonly/?fname="+fname)
-
-		if (eyear_validSchool - syear_validSchool <= 1):
-			# Guy must have done certification or short term course
-			self.redirect("/jobc/inviteonly/?fname="+fname)
-
-
-		job_list = []
-		if j.has_key('positions'):
-			if j['positions'].has_key('values'):
-				job_list = j['positions']['values']
-
-		for job in job_list:
-			isCurrent = False
-			sDate = None
-			eDate = datetime.datetime(1900, 1,1)
-			title = ''
-			company_id = ''
-			company_name = ''
-			company_type = ''
-			company_industry = ''
-			company_size = ''
-
-			if job.has_key('startDate'):
-				year = 0
-				month = 1
-			if job['startDate'].has_key('year'):
-				year = int(job['startDate']['year'])
-			if job['startDate'].has_key('month'):
-				month = int(job['startDate']['month'])
-			if (year > 0):
-				sDate = datetime.datetime(year, month, 1)
-				
-			if job.has_key('endDate'):
-				year = 0
-				month = 1
-				if job['endDate'].has_key('year'):
-					year = int(job['endDate']['year'])
-				if job['endDate'].has_key('month'):
-					month = int(job['endDate']['month'])
-				if (year > 0):
-					eDate = datetime.datetime(year, month, 1)
-
-			if eyear_validSchool == 0 or datetime.datetime(eyear_validSchool, 1,1) > sDate :
-				#this is pre mba job
-				continue
-
-			if job.has_key('company'):
-				if job['company'].has_key('id'):
-					company_id = job['company']['id']		
-				if job['company'].has_key('industry'):
-					company_industry = job['company']['industry']
-				if job['company'].has_key('name'):
-					company_name = job['company']['name']
-				if job['company'].has_key('size'):
-					company_size = job['company']['size']
-				if job['company'].has_key('type'):
-					company_type = job['company']['type']
-
-			company = dbmodels.Company.all().filter('company_id = ', company_id).get()
-			if not company:
-				company = dbmodels.Company(company_id=int(company_id), company_name=company_name, company_industry=company_industry, company_size=company_size, company_type=company_type)
-				company.put()
-
-			if job.has_key('isCurrent'):
-				isCurrent = bool(job['isCurrent'])
-			if job.has_key('title'):
-				title = job['title']
-
-			jobkey = dbmodels.jobkey(linkedin_id = person.linkedin_id, company_id=company.company_id, eDate=eDate)
-			logging.error("eDate " )
-			logging.error(eDate)
-			jobdb = dbmodels.Job.all().filter('jobkey = ', jobkey).get()
-			if not jobdb:
-				jobdb = dbmodels.Job(title=title, person=person, company=company, person_linkedin_id = person.linkedin_id, company_id = company.company_id, sdate = sDate, edate=eDate, jobkey=jobkey)
-				jobdb.put()
-			#print '%s - %s (%s) %s %s' %(company_name, company_industry, company_id, company_size, company_type)
-			#print '%s (%s - %s) %s \n' %(title, sDate, eDate, isCurrent)
-		
-		post_mba_jobs = []
-		for pjob in person.person_job:
-			post_mba_jobs.append((pjob.title, pjob.company.company_name,pjob.jobkey))
-		njobs= len(post_mba_jobs)
-		self.response.out.write(render_str("alumpage.html", fullname= fname, pictureUrl= pictureUrl,njobs=njobs, job=post_mba_jobs))
+		njobs= len(post_mba_jobs)		
+		self.response.out.write(render_str("alumpage.html", fullname= person.fname, pictureUrl= person.picture_url,njobs=njobs, job=post_mba_jobs))
 
 	def post(self):
 		logging.error("MainPage Post")
-		referer_url = self.request.headers.get('Referer')
-		logging.error(referer_url)
-		#if not oauth_token:
 		(oauth_token, oauth_token_secret) = self.setTokenAndSecret()
 		url = "%s?oauth_token=%s" % (authorize_url, oauth_token)
-
  		self.redirect(url)
-
-class PostLoginPage(webapp2.RequestHandler):
-	def get(self) :
-		global dummy, oauth_token, oauth_token_secret
-
-   
-#movie.picture = db.Blob(urlfetch.Fetch(picture_url).content)
-
-
-#print '%s %s (%s) - %s at %s' %(fname, lname, linkedin_id, industry, location) 
-#print 'nconnections %s' %nconnection
 
 class InviteOnly(webapp2.RequestHandler) :
 	def get(self) :
@@ -369,18 +116,18 @@ class RealJD(webapp2.RequestHandler) :
 		page = self.request.get("page")
 		if job_id[0] == "/":
 			job_id = job_id[1:]
-		job = getJob(job_id)
+		job = dbmodels.getJob(job_id)
 		if not job:
 			#throw some error
 			self.redirect("/jobc")
 		title = job.title 
-		company = getCompany(job.company_id)
+		company = dbmodels.getCompany(job.company_id)
 		companyname = company.company_name
 		companyurl = "http://www.linkedin.com/company/" + str(job.company_id)
 		author = job.posted_by_text
 		authorurl = ''
 		if author == "self":
-			person = getPerson(job.person_linkedin_id)
+			person = dbmodels.getPerson(job.person_linkedin_id)
 			author = person.fname + " (Alumnus of " + person.keyschool.schoolname+")"
 			authorurl = "http://www.linkedin.com/profile/view?id="+person.linkedin_id
 		date = job.modify_date.strftime('%m/%Y')
@@ -402,12 +149,12 @@ class RealJDEdit(webapp2.RequestHandler) :
 		page = self.request.get("page")
 		if job_id[0] == "/":
 			job_id = job_id[1:]
-		job = getJob(job_id)
+		job = dbmodels.getJob(job_id)
 
 		if not job:
 			# some error here
 			self.redirect("/jobc")
-		p= getPerson(job.person_linkedin_id)
+		p= dbmodels.getPerson(job.person_linkedin_id)
 		if not page:
 			school = "Alum of " + p.keyschool.schoolname
 			fullname = p.fname
@@ -415,7 +162,7 @@ class RealJDEdit(webapp2.RequestHandler) :
 			title = job.title
 			logging.error("companyid")
 			logging.error(job.company_id)
-			company = getCompany(job.company_id).company_name
+			company = dbmodels.getCompany(job.company_id).company_name
 			sdate = job.sdate
 			authorcheck = job.posted_by_text
 			if (authorcheck == ""):
@@ -453,7 +200,7 @@ class RealJDEdit(webapp2.RequestHandler) :
 		page = self.request.get("page")
 		if job_id[0] == "/":
 			job_id = job_id[1:]
-		job = getJob(job_id)
+		job = dbmodels.getJob(job_id)
 		if not job :
 			#some error handling here
 			self.redirect("/jobc")
@@ -470,7 +217,7 @@ class RealJDEdit(webapp2.RequestHandler) :
 			job.jhate = self.request.get("jhate")
 			job.posted_by_text = self.request.get("postas")
 			#logging.error("postas " + self.request.get("postas"))
-			setJob(jobkey=job.jobkey, job = job)
+			dbmodels.setJob(jobkey=job.jobkey, job = job)
 			job.put()
 			url = "/jobc/realjd/_edit/"+job_id+"?page=1"
 			#logging.error("url: " + url)
@@ -487,7 +234,7 @@ class RealJDEdit(webapp2.RequestHandler) :
 			job.alum_base = self.request.get("abase")
 			job.interview_question = self.request.get("iq")
 			job.exit_option = self.request.get("eo")
-			setJob(jobkey=job.jobkey, job=job)
+			dbmodels.setJob(jobkey=job.jobkey, job=job)
 			job.put()
 			url = "/jobc/realjd/"+job_id
 			logging.error("url: " + url)
@@ -495,8 +242,4 @@ class RealJDEdit(webapp2.RequestHandler) :
 		else:
 			#some error handling here
 			# either redirect to first page
-			self.redirect("/jobc") 
-
-
-		
-		
+			self.redirect("/jobc")

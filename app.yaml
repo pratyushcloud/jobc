@@ -12,9 +12,6 @@ handlers:
 - url: /jobc/inviteonly/
   script: handler.app
 
-- url: /jobc/home
-  script: handler.app
-
 - url: /jobc/login
   script: handler.app
 
