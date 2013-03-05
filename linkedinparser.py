@@ -1,21 +1,22 @@
 import json	
 import datetime
 import logging
-
-from google.appengine.api import urlfetch
-from google.appengine.ext import db
+import time
 
 import dbmodels
+import exceptions
 
-validschools = ['Indian Institute of Management, Calcutta']
+validschools = ['Indian Institute of Management, Calcutta', 'IIM Calcutta']
 
-def parseContent(content) :
+def parseContent(content, expires_in) :
+		""" content is linkedin json expires_in = expires in n seconds """
+		logging.error(content)
 		j = json.loads(content)
 		post_mba_jobs = []
 
 		nconnection = int(j['numConnections'])
-		if (nconnection < 10) :
-			return (None, post_mba_jobs)
+		if (nconnection < 0) : #TODO removing this check as of now
+			return (None, [])
 
 		fname = ''
 		lname = '' 
@@ -24,6 +25,8 @@ def parseContent(content) :
 		location = ''
 		pictureUrl = ''
 		publicUrl = '' 
+
+		expires_on = int(round(time.time())) + expires_in
 
 		if j.has_key('firstName'):
 			fname = j['firstName']
@@ -61,12 +64,16 @@ def parseContent(content) :
 			elif person.public_profile_url != publicUrl:
 				person.public_profile_url = publicUrl
 				hasChanged = True
+			elif person.oauth_expires_in != expires_on:
+				person.oauth_expires_in = expires_on
+				hasChanged = True
 			if hasChanged:
 				person.put()
 		if not person: # TODO how to check if something has changed in the profile
 			person = dbmodels.Person(fname=fname, lname = lname, linkedin_id=linkedin_id, industry=industry, location=location, picture_url=pictureUrl, public_profile_url=publicUrl)
 			if pictureUrl and pictureUrl != '':
-				person.picture = db.Blob(urlfetch.Fetch(pictureUrl).content)
+				person.picture = dbmodels.fetchPicture(pictureUrl)
+			person.oauth_expires_in = expires_in
 			person.put()
 
 		school_list = []
@@ -80,6 +87,10 @@ def parseContent(content) :
 		syear_validSchool = 0
 		eyear_validSchool = 0
 		validSchool= None
+
+		logging.error("school_list")
+		logging.error(school_list)
+
 		for school in school_list:
 			syear = 0
 			eyear = 0
@@ -98,7 +109,8 @@ def parseContent(content) :
 				study_field = school['fieldOfStudy']			
 			if school.has_key('schoolName'):
 				schoolName = school['schoolName']
-				if any(schoolName in s for s in validschools):
+				logging.error("school name " + schoolName)
+				if schoolName in validschools:
 					isvalidSchool = True
 					logging.error("schoolName " + schoolName)
 					schooldb = dbmodels.School.all().filter('schoolname = ', schoolName).get()
@@ -109,6 +121,7 @@ def parseContent(content) :
 					person.keyschool = validschool
 					person.put() # not recommended to do double db write
 					education = dbmodels.Education(person=person, school=schooldb, degree=degree, fieldofstudy=study_field, syear=syear, eyear=eyear)
+					
 					# take the minimum year. person might have had two degrees from a school. we take the oldest one
 					if (syear_validSchool >  0 and eyear_validSchool > 0 and syear > 0 and eyear > 0) :
 						if (eyear_validSchool > eyear) :
@@ -117,17 +130,15 @@ def parseContent(content) :
 					if (syear_validSchool == 0 and eyear_validSchool == 0) :
 						syear_validSchool = syear
 						eyear_validSchool = eyear
-
-			#print "%s (%s-%s) %s (%s)" %(schoolName, syear, eyear, degree, study_field)
 		
 		if not isvalidSchool:
 			#self.redirect("/jobc/inviteonly/?fname="+fname)
-			return -1
+			return (None, [])
 
 		if (eyear_validSchool - syear_validSchool <= 1):
 			# Guy must have done certification or short term course
 			#self.redirect("/jobc/inviteonly/?fname="+fname)
-			return -1
+			return (None, [])
 
 
 		job_list = []
@@ -141,7 +152,7 @@ def parseContent(content) :
 			eDate = datetime.datetime(1900, 1,1)
 			title = ''
 			company_id = ''
-			company_name = ''
+			company_name = '?'
 			company_type = ''
 			company_industry = ''
 			company_size = ''
@@ -184,7 +195,8 @@ def parseContent(content) :
 
 			company = dbmodels.Company.all().filter('company_id = ', company_id).get()
 			if not company:
-				company = dbmodels.Company(company_id=int(company_id), company_name=company_name, company_industry=company_industry, company_size=company_size, company_type=company_type)
+				logging.error("company_name $" +company_name+"$")
+				company = dbmodels.Company(company_id=num(company_id), company_name=company_name, company_industry=company_industry, company_size=company_size, company_type=company_type)
 				company.put()
 
 			if job.has_key('isCurrent'):
@@ -193,7 +205,7 @@ def parseContent(content) :
 				title = job['title']
 
 			jobkey = dbmodels.jobkey(linkedin_id = person.linkedin_id, company_id=company.company_id, eDate=eDate)
-			logging.error("eDate " )
+			logging.error("eDate ")
 			logging.error(eDate)
 			jobdb = dbmodels.Job.all().filter('jobkey = ', jobkey).get()
 			if not jobdb:
@@ -206,3 +218,10 @@ def parseContent(content) :
 			post_mba_jobs.append((pjob.title, pjob.company.company_name,pjob.jobkey))
 		
 		return (person, post_mba_jobs)
+
+
+def num (s):
+    try:
+        return int(s)
+    except ValueError:
+        return 0

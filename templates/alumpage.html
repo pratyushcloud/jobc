@@ -8,6 +8,14 @@
 
 <body>
 
+  <div class="login-area">
+      {% if user %}
+	        {{user}} (<a class="login-link" href="/jobc/logout">logout</a>)
+   {% else %}
+	        <a class="login-link" href="/jobc">login</a>
+    {% endif %}
+  </div>
+
 
     <h2>Hi there Jokaite!</h2>
 	<img src="{{pictureUrl}}" alt={{fullname}} height="80" width="80">

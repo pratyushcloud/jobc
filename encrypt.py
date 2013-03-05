@@ -39,15 +39,27 @@ def make_cookie(userid):
 	return '%s%s%s' % (userid, SEPARATOR, hmac.new(SECRET, userid).hexdigest())
 
 def valid_cookie(cookie_val):
-    val = secure_val.split(SEPARATOR)[0]
-    if cookie_val == make_cookie(val):
-        return val
+    """ returns True if cookie is a valid cookie"""
+    user_id = cookie_val.split(SEPARATOR)[0]
+    if cookie_val == make_cookie(user_id):
+        return True
 	
 def decode_cookie(cookie_val):
     if cookie_val:
     	 idx = cookie_val.index(SEPARATOR)
        	 return (cookie_val[:idx], cookie_val[idx+1:])
 
+def getUserId(cookie_val) :
+    if cookie_val:
+        idx = cookie_val.index(SEPARATOR)
+        try :
+            userid = long(cookie_val[:idx])
+            return userid
+        except ValueError:
+            return -1
+    return -1 
+
 h = make_pw_hash('rrr', 'rrr')
 
-print make_hash('a-XWIKlbew-5944-1900-01-01 00:00:00')
+#print make_hash('a-XWIKlbew-5944-1900-01-01 00:00:00')
+#print valid_cookie('12|97f9c20c1f2a2841b7f7adf11f5c5c54')

@@ -1,4 +1,5 @@
 from google.appengine.ext import db
+from google.appengine.api import urlfetch
 from google.appengine.api import memcache
 import datetime
 import encrypt
@@ -37,8 +38,13 @@ def setJob(jobkey, job):
 	#TODO make checks here on validity of jobkey or job variable
 	memcache.set(jobkey, job)
 
+
+def fetchPicture(pictureUrl):
+	""" returns blob object given a picture url"""
+	return db.Blob(urlfetch.Fetch(pictureUrl).content)
+
 class Company (db.Model):
-	company_id = db.IntegerProperty(required=True)
+	company_id = db.IntegerProperty(required=False) # some jobs may not have company id
 	company_name = db.StringProperty(required=True)
 	company_type = db.StringProperty(default="")
 	company_industry = db.StringProperty(default="")

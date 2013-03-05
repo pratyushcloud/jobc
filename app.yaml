@@ -15,6 +15,9 @@ handlers:
 - url: /jobc/login
   script: handler.app
 
+- url: /jobc/logout
+  script: handler.app
+
 - url: /jobc/realjd(/(?:[a-zA-Z0-9_-]+/?)*)
   script: handler.app
 
