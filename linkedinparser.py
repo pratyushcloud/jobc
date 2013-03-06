@@ -225,3 +225,4 @@ def num (s):
         return int(s)
     except ValueError:
         return 0
+	
