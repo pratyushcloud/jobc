@@ -24,6 +24,30 @@ handlers:
 - url: /jobc/realjd/_edit(/(?:[a-zA-Z0-9_-]+/?)*)
   script: handler.app
 
+- url: /jobc/aboutus
+  script: handler.app
+
+- url: /jobc/realjob
+  script: handler.app
+
+- url: /jobc/marketing
+  script: handler.app
+
+- url: /jobc/informationtechnology
+  script: handler.app
+
+- url: /jobc/sales
+  script: handler.app
+
+- url: /jobc/finance
+  script: handler.app
+
+- url: /jobc/consulting
+  script: handler.app
+
+- url: /jobc/supplchain
+  script: handler.app
+
 - url: /static
   static_dir: static
 

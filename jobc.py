@@ -146,6 +146,11 @@ class Logout(webapp2.RequestHandler) :
 		self.response.headers.add_header('Set-Cookie', '%s=%s; Path=/'%(USERID_COOKIE, ''))
 		self.response.out.write(render_str("logout.html"))
 
+
+class AboutUs(webapp2.RequestHandler) :
+	def get(self) :
+		self.response.out.write(render_str("aboutus.html"))
+
 class RealJD(webapp2.RequestHandler) :
 	def get(self, job_id):
 		page = self.request.get("page")
@@ -281,3 +286,11 @@ class RealJDEdit(webapp2.RequestHandler) :
 			#some error handling here
 			# either redirect to first page
 			self.redirect("/jobc")
+
+
+class ReviewDashboard(webapp2.RequestHandler) :
+	def get(self):
+		self.response.out.write(render_str("jddashboard.html"))
+
+
+
