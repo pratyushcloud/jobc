@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<link type="text/css" rel="stylesheet" href="/static/main.css" />
+
+ <STYLE type="text/css">
+
+</style>
+
+</head>
+<body>
+
+
+      <div id="topMenu">
+      <ul>
+        <li><a href="/jobc/home"><strong style="color:white;">Home</strong></a></li>
+        <li><a href="/jobc/realjob">Real Job Review</a></li>
+        <li><a href="/jobc/blog">Career Advice</a></li>
+        <li><a href="/jobc/aboutus">About Us</a></li>
+      </ul>
+      </div>
+      
+<h1> Browse Job by functions </h1>
+{% for key in jobbycompany%}
+<tr>
+  {{key}}
+<td>  jobbycompany[key]['jobtitle']  <a  href="{{joburl}}">{{ jobbycompany[key]['jobtitle'] }}</a></td> <br><br>
+
+</tr>
+{%endfor%}
+
+</body>
+</html>

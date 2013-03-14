@@ -29,8 +29,8 @@ USERID_COOKIE = 'user_id'
 # Use your API key and secret to instantiate consumer object
 consumer_key    =   'gge7se1gxi53' #mentorme api
 consumer_secret =   'Vlun3FqAAu7H5Yq3'
-#consumer_key= 'yfn26ez21xqb' #localhost
-#consumer_secret = '8k478hHqjam3273z' #localhost
+consumer_key= 'yfn26ez21xqb' #localhost
+consumer_secret = '8k478hHqjam3273z' #localhost
 
 logging.getLogger().setLevel(logging.DEBUG)
 
@@ -151,6 +151,32 @@ class AboutUs(webapp2.RequestHandler) :
 	def get(self) :
 		self.response.out.write(render_str("aboutus.html"))
 
+def setRealJDContent(job) :
+		params = {}
+		params['title'] = job.title 
+		company = dbmodels.getCompany(job.company_id)
+		params['companyname'] = company.company_name
+		params['companyurl'] = "http://www.linkedin.com/company/" + str(job.company_id)
+		params['author'] = job.posted_by_text
+		params['authorurl'] = ''
+		if author == "self":
+			person = dbmodels.getPerson(job.person_linkedin_id)
+			params['author'] = person.fname + " (Alumnus of " + person.keyschool.schoolname+")"
+			params['authorurl'] = "http://www.linkedin.com/profile/view?id="+person.linkedin_id
+
+		params['date'] = job.modify_date.strftime('%m/%Y')
+		params['jd'] = job.dayinoffice
+		params['salary'] = "Fixed: " + job.fixed_salary + " Variable: Yearly Bonus:" + job.yearly_bonus+" Joining Bonus:" + job.joining_bonus + " Stock: " + job.stock 
+		params['jlove'] = job.jlove
+		params['jhate'] = job.jhate
+		params['iq'] = job.interview_question
+		params['eo'] = job.exit_option
+		params['wop'] = job.work_opportunity
+		params['wc'] = job.work_culture
+		params['wsg'] = job.salary_growth
+		params['wlb'] = job.work_life_balance
+		return params
+
 class RealJD(webapp2.RequestHandler) :
 	def get(self, job_id):
 		page = self.request.get("page")
@@ -160,30 +186,9 @@ class RealJD(webapp2.RequestHandler) :
 		if not job:
 			#throw some error
 			self.redirect("/jobc")
-		title = job.title 
-		company = dbmodels.getCompany(job.company_id)
-		companyname = company.company_name
-		companyurl = "http://www.linkedin.com/company/" + str(job.company_id)
-		author = job.posted_by_text
-		authorurl = ''
-		if author == "self":
-			person = dbmodels.getPerson(job.person_linkedin_id)
-			author = person.fname + " (Alumnus of " + person.keyschool.schoolname+")"
-			authorurl = "http://www.linkedin.com/profile/view?id="+person.linkedin_id
 
-		date = job.modify_date.strftime('%m/%Y')
-		jd = job.dayinoffice
-		salary = "Fixed: " + job.fixed_salary + " Variable: Yearly Bonus:" + job.yearly_bonus+" Joining Bonus:" + job.joining_bonus + " Stock: " + job.stock 
-		jlove = job.jlove
-		jhate = job.jhate
-		iq = job.interview_question
-		eo = job.exit_option
-		wop = job.work_opportunity
-		wc = job.work_culture
-		wsg = job.salary_growth
-		wlb = job.work_life_balance
-		self.response.out.write(render_str("onejd.html", title=title, author=author, authorurl = authorurl, companyname=companyname, companyurl=companyurl, date=date, jd=jd, salary=salary, jlove = jlove, jhate= jhate,
-			iq = iq, eo = eo, wop = wop, wc = wc, wsg = wsg, wlb=wlb))
+		params = setRealJDContent(job)
+		self.response.out.write(render_str("onejd.html", **params))
 
 class RealJDEdit(webapp2.RequestHandler) :
 	def get(self, job_id):
@@ -261,6 +266,7 @@ class RealJDEdit(webapp2.RequestHandler) :
 			job.posted_by_text = self.request.get("postas")
 			#logging.error("postas " + self.request.get("postas"))
 			dbmodels.setJob(jobkey=job.jobkey, job = job)
+			dbmodels.addJob2FunctionList(function=job.function, jobkey=job.jobkey)
 			job.put()
 			url = "/jobc/realjd/_edit/"+job_id+"?page=1"
 			#logging.error("url: " + url)
@@ -290,7 +296,53 @@ class RealJDEdit(webapp2.RequestHandler) :
 
 class ReviewDashboard(webapp2.RequestHandler) :
 	def get(self):
-		self.response.out.write(render_str("jddashboard.html"))
+		self.response.out.write(render_str("jobfunctions.html"))
 
 
+def jobbycompany(jobids):
+	jobbycompany = {}
+	for jid in jobids:
+		job = dbmodels.getJob(jid)
+		company = dbmodels.getCompany(job.company_id)
+		companyname = company.company_name
+		jobtitle = job.title
+		if companyname in jobbycompany:
+			jobbycompany[companyname].append(jid)
+		else:
+			jobbycompany[companyname] = {}
+			jobbycompany[companyname]['jobtitle'] = jobtitle
+			jobbycompany[companyname]['joburl'] = '/jobc/realjd/'+jid
 
+class Marketing(webapp2.RequestHandler):
+	def get(self):
+		jobids = dbmodels.getJobIdsForFunction('Marketing')
+		jobbyc =jobbycompany(jobids)
+		if not jobbyc or len(jobbyc) == 0:
+			self.response.out.write('No marketing jobs as yet!')
+			return
+		self.response.out.write(render_str("jddashboard.html", jobbycompany=jobbyc))
+
+class IT(webapp2.RequestHandler):
+	def get(self):
+		jobids = dbmodels.getJobIdsForFunction('IT')
+		jobbyc =jobbycompany(jobids)
+		if not jobbyc or len(jobbyc) == 0:
+			self.response.out.write('No IT jobs as yet!')
+			return
+		self.response.out.write(render_str("jddashboard.html", jobbycompany=jobbyc))
+
+class Sales(webapp2.RequestHandler):
+	def get(self):
+		jobids = dbmodels.getJobIdsForFunction('Sales')
+		jobbyc =jobbycompany(jobids)
+		if len(jobbyc) == 0:
+			self.response.out.write('No IT jobs as yet!')
+		self.response.out.write(render_str("jddashboard.html", jobbycompany=jobbyc))
+
+class Finance(webapp2.RequestHandler):
+	def get(self):
+		jobids = dbmodels.getJobIdsForFunction('Finance')
+		jobbyc =jobbycompany(jobids)
+		if len(jobbyc) == 0:
+			self.response.out.write('No Finance jobs as yet!')
+		self.response.out.write(render_str("jddashboard.html", jobbycompany=jobbyc))

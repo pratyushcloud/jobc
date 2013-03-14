@@ -43,6 +43,24 @@ def fetchPicture(pictureUrl):
 	""" returns blob object given a picture url"""
 	return db.Blob(urlfetch.Fetch(pictureUrl).content)
 
+
+def getJobIdsForFunction(function):
+	""" returns list of jobids for a given function"""
+	jobids = []
+	if not memcache.get(function):
+		jobs = db.GqlQuery("SELECT * FROM Job where function='%s'"%function)
+		print "SELECT * FROM Job where function='%s'"%function
+    		for j in jobs: 
+    			jobids.append(j.jobkey)
+    		memcache.set(function, jobids)
+	return memcache.get(function)
+
+#TODO what if somebody changes job function; would need to delete jobid from older function as well
+def addJob2FunctionList(function, jobkey) :
+	jobids = memcache.get(function)
+	jobids.append(jobkey)
+	memcache.set(function, jobids)
+
 class Company (db.Model):
 	company_id = db.IntegerProperty(required=False) # some jobs may not have company id
 	company_name = db.StringProperty(required=True)
