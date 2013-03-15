@@ -29,8 +29,8 @@ USERID_COOKIE = 'user_id'
 # Use your API key and secret to instantiate consumer object
 consumer_key    =   'gge7se1gxi53' #mentorme api
 consumer_secret =   'Vlun3FqAAu7H5Yq3'
-consumer_key= 'yfn26ez21xqb' #localhost
-consumer_secret = '8k478hHqjam3273z' #localhost
+#consumer_key= 'yfn26ez21xqb' #localhost
+#consumer_secret = '8k478hHqjam3273z' #localhost
 
 logging.getLogger().setLevel(logging.DEBUG)
 
@@ -159,7 +159,7 @@ def setRealJDContent(job) :
 		params['companyurl'] = "http://www.linkedin.com/company/" + str(job.company_id)
 		params['author'] = job.posted_by_text
 		params['authorurl'] = ''
-		if author == "self":
+		if params['author'] == "self":
 			person = dbmodels.getPerson(job.person_linkedin_id)
 			params['author'] = person.fname + " (Alumnus of " + person.keyschool.schoolname+")"
 			params['authorurl'] = "http://www.linkedin.com/profile/view?id="+person.linkedin_id
@@ -301,48 +301,71 @@ class ReviewDashboard(webapp2.RequestHandler) :
 
 def jobbycompany(jobids):
 	jobbycompany = {}
+	i = 0
 	for jid in jobids:
 		job = dbmodels.getJob(jid)
 		company = dbmodels.getCompany(job.company_id)
 		companyname = company.company_name
 		jobtitle = job.title
-		if companyname in jobbycompany:
-			jobbycompany[companyname].append(jid)
-		else:
+		if not companyname in jobbycompany:
 			jobbycompany[companyname] = {}
-			jobbycompany[companyname]['jobtitle'] = jobtitle
-			jobbycompany[companyname]['joburl'] = '/jobc/realjd/'+jid
+		else:
+			jobbycompany[companyname][i] = {}
+			jobbycompany[companyname][i]['jobtitle'] = jobtitle
+			jobbycompany[companyname][i]['joburl'] = '/jobc/realjd/'+jid
+	return jobbycompany
 
 class Marketing(webapp2.RequestHandler):
 	def get(self):
 		jobids = dbmodels.getJobIdsForFunction('Marketing')
 		jobbyc =jobbycompany(jobids)
 		if not jobbyc or len(jobbyc) == 0:
-			self.response.out.write('No marketing jobs as yet!')
+			self.response.out.write(render_str("nojobyet.html",function = "Marketing"))
 			return
-		self.response.out.write(render_str("jddashboard.html", jobbycompany=jobbyc))
+		self.response.out.write(render_str("jddashboard.html", jobbycompany=jobbyc, function="Marketing"))
 
 class IT(webapp2.RequestHandler):
 	def get(self):
 		jobids = dbmodels.getJobIdsForFunction('IT')
 		jobbyc =jobbycompany(jobids)
-		if not jobbyc or len(jobbyc) == 0:
-			self.response.out.write('No IT jobs as yet!')
+		if (not jobbyc) or len(jobbyc) == 0:
+			self.response.out.write(render_str("nojobyet.html",function = "IT"))
 			return
-		self.response.out.write(render_str("jddashboard.html", jobbycompany=jobbyc))
+		logging.error( jobbyc)
+		self.response.out.write(render_str("jddashboard.html", jobbycompany=jobbyc, function = "IT"))
 
 class Sales(webapp2.RequestHandler):
 	def get(self):
 		jobids = dbmodels.getJobIdsForFunction('Sales')
 		jobbyc =jobbycompany(jobids)
-		if len(jobbyc) == 0:
-			self.response.out.write('No IT jobs as yet!')
-		self.response.out.write(render_str("jddashboard.html", jobbycompany=jobbyc))
+		if (not jobbyc) or len(jobbyc) == 0:
+			self.response.out.write(render_str("nojobyet.html",function = "Sales"))
+			return
+		self.response.out.write(render_str("jddashboard.html", jobbycompany=jobbyc, function = "Sales"))
 
 class Finance(webapp2.RequestHandler):
 	def get(self):
 		jobids = dbmodels.getJobIdsForFunction('Finance')
 		jobbyc =jobbycompany(jobids)
-		if len(jobbyc) == 0:
-			self.response.out.write('No Finance jobs as yet!')
-		self.response.out.write(render_str("jddashboard.html", jobbycompany=jobbyc))
+		if (not jobbyc) or len(jobbyc) == 0:
+			self.response.out.write(render_str("nojobyet.html",function = "Finance"))
+			return
+		self.response.out.write(render_str("jddashboard.html", jobbycompany=jobbyc, function = "Finance"))
+
+class Consulting(webapp2.RequestHandler):
+	def get(self):
+		jobids = dbmodels.getJobIdsForFunction('Consulting')
+		jobbyc =jobbycompany(jobids)
+		if (not jobbyc) or len(jobbyc) == 0:
+			self.response.out.write(render_str("nojobyet.html",function = "Consulting"))
+			return
+		self.response.out.write(render_str("jddashboard.html", jobbycompany=jobbyc, function = "Consulting"))
+
+class SupplyChain(webapp2.RequestHandler):
+	def get(self):
+		jobids = dbmodels.getJobIdsForFunction('SupplyChain')
+		jobbyc =jobbycompany(jobids)
+		if (not jobbyc) or len(jobbyc) == 0:
+			self.response.out.write(render_str("nojobyet.html",function = "Supply Chain"))
+			return
+		self.response.out.write(render_str("jddashboard.html", jobbycompany=jobbyc, function = "Supply Chain"))

@@ -47,9 +47,9 @@ def fetchPicture(pictureUrl):
 def getJobIdsForFunction(function):
 	""" returns list of jobids for a given function"""
 	jobids = []
+	jobs = db.GqlQuery("SELECT * FROM Job where function='%s'"%function)
 	if not memcache.get(function):
-		jobs = db.GqlQuery("SELECT * FROM Job where function='%s'"%function)
-		print "SELECT * FROM Job where function='%s'"%function
+		
     		for j in jobs: 
     			jobids.append(j.jobkey)
     		memcache.set(function, jobids)

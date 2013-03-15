@@ -45,7 +45,7 @@ handlers:
 - url: /jobc/consulting
   script: handler.app
 
-- url: /jobc/supplchain
+- url: /jobc/supplychain
   script: handler.app
 
 - url: /static

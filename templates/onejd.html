@@ -2,15 +2,20 @@
 
 <html>
   <head>
+     <link type="text/css" rel="stylesheet" href="/static/main.css" />
     <title>{{title}}</title>
-    <style type="text/css">
-      .label {text-align: right}
-      .error {color: red}
-    </style>
+
 
   </head>
    <body>
-
+      <div id="topMenu">
+      <ul>
+        <li><a href="/jobc"><strong style="color:white;">Home</strong></a></li>
+        <li><a href="/jobc/realjob">Real Job Review</a></li>
+        <li><a href="http://mentorcareer.blogspot.in/">Career Advice</a></li>
+        <li><a href="/jobc/aboutus">About Us</a></li>
+      </ul>
+      </div>
 <h2> {{title}} @ <a href="{{companyurl}}">{{companyname}}</a></h2>
 Review Posted by  <a class = "" href="{{authorurl}}">{{author}}</a><br>
 Review Date {{date}} <br> <br>
@@ -26,6 +31,5 @@ Salary Growth: {{wsg}}<br>
 Work Life Balance: {{wlb}}<br><br>
 Salary {{salary}}<br><br>
 
- <a class = "Go back" href="{{summaryurl}}">Go Back</a>
   </body>
   </html>
