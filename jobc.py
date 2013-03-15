@@ -29,8 +29,8 @@ USERID_COOKIE = 'user_id'
 # Use your API key and secret to instantiate consumer object
 consumer_key    =   'gge7se1gxi53' #mentorme api
 consumer_secret =   'Vlun3FqAAu7H5Yq3'
-#consumer_key= 'yfn26ez21xqb' #localhost
-#consumer_secret = '8k478hHqjam3273z' #localhost
+consumer_key= 'yfn26ez21xqb' #localhost
+consumer_secret = '8k478hHqjam3273z' #localhost
 
 logging.getLogger().setLevel(logging.DEBUG)
 
@@ -309,10 +309,9 @@ def jobbycompany(jobids):
 		jobtitle = job.title
 		if not companyname in jobbycompany:
 			jobbycompany[companyname] = {}
-		else:
-			jobbycompany[companyname][i] = {}
-			jobbycompany[companyname][i]['jobtitle'] = jobtitle
-			jobbycompany[companyname][i]['joburl'] = '/jobc/realjd/'+jid
+		jobbycompany[companyname][i] = {}
+		jobbycompany[companyname][i]['jobtitle'] = jobtitle
+		jobbycompany[companyname][i]['joburl'] = '/jobc/realjd/'+jid
 	return jobbycompany
 
 class Marketing(webapp2.RequestHandler):
@@ -327,6 +326,7 @@ class Marketing(webapp2.RequestHandler):
 class IT(webapp2.RequestHandler):
 	def get(self):
 		jobids = dbmodels.getJobIdsForFunction('IT')
+		logging.error(jobids)
 		jobbyc =jobbycompany(jobids)
 		if (not jobbyc) or len(jobbyc) == 0:
 			self.response.out.write(render_str("nojobyet.html",function = "IT"))
