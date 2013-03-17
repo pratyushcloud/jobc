@@ -8,25 +8,34 @@
       .label {text-align: right}
       .error {color: red}
     </style>
-
+  <link rel="stylesheet" type="text/css" media="all" href="/static/style.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/static/responsive.css">
+  <link type="text/css" rel="stylesheet" href="/static/topmenu.css" />
   </head>
 
   <body>
-      <div class="login-area">
-      {% if user %}
-          {{user}} (<a class="login-link" href="/jobc/logout">logout</a>)
-   {% else %}
-          <a class="login-link" href="/jobc">login</a>
-    {% endif %}
-  </div>
-    <h2>Job Details</h2>
-    <form method="post">
-      <table>
-        <tr>
-          <td class="label">
-            Post as
-          </td>
-          <td>
+        <div id="topMenu">
+	       <ul>
+	         <li><a href="/jobc"><strong style="color:white;">Home</strong></a></li>
+	         <li><a href="/jobc/realjob">Real Job Review</a></li>
+	         <li><a href="http://mentorcareer.blogspot.in/">Career Advice</a></li>
+	         <li><a href="/jobc/aboutus">About Us</a></li>
+	         <li  class="login-area"> {% if user %}
+	 	        {{user}} <a class="login-link" style="display:inline" href="/jobc/logout">(logout)</a>
+	    {% else %}
+	 	        <a class="login-link" style="display:inline" href="/jobc">login</a>
+	     {% endif %}
+	     </li>
+	       </ul>
+      </div>
+
+    	<section id="container">
+    	    <h2>Real Job Details</h2>
+    <form name="hongkiat" id="hongkiat-form" method="post">
+<div id="wrapping" class="clearfix">
+
+          <h3>Post as:</h3>
+			<img src="http://2.bp.blogspot.com/-neLmKL2ctig/UUXNBzWWr5I/AAAAAAAAFIw/fBeEqZcO8g4/s1600/user.png">
             {%set authorcheck1 = ''%}
             {%set authorcheck2 = ''%}
             {%set authorcheck3 = ''%}
@@ -37,50 +46,36 @@
             {% elif authorcheck == "anonymous" %}
             {%set authorchek3 ="checked"%}
             {%endif%}
-            <input type="radio" name="postas" value="self" {{authorcheck1}}>{{oneself}}
-            <input type="radio" name="postas" value="alum" {{authorcheck2}} >{{schoolname}}
-            <input type="radio" name="postas" value="anonymous" {{authorcheck3}}>Anonymous
+			<span class="radiobadge">
+           	 	<input type="radio" name="postas"  value="self" {{authorcheck1}}>
+				<label for="self">{{oneself}}</label>
+			</span>
+           	<span class="radiobadge">
+           		<input type="radio" name="postas" value="alum" {{authorcheck2}} >
+           		<label for="alum">{{schoolname}}</label>
+           	</span>
+           	<span class="radiobadge">
+           		<input type="radio" name="postas"  value="anonymous" {{authorcheck3}}>
+				<label for="anonymous">Anonymous</label>
+			</span>
+          <h3>Job Title:</h3>
+			<input type="text"  name="title" placeholder="Job Title" autocomplete="off" class="txtinput" value="{{title}}">
 
-          </td>
-        </tr>
 
-        <tr>
-          <td class="label">
-            Job Title
-          </td>
-          <td>
-            <input type="text" size = "50" name="title" value="{{title}}">
-          </td>
-        </tr>
-        <tr>
-          <td class="label">
-            Company
-          </td>
-          <td>
-            <input type="text" size = "30" name="company" value="{{company}}">
-          </td>
-        </tr>
-        <div>
-        <tr>
-          <div class="alphatext">
-          <td class="label">
-            From:
-          </td>
-          <td>
-            <input type="text" size = "15" name="sdate" value="{{sdate}}" style="float:left">
-          </td>
-          <td class = "label" {padding-left:50px;}>to </td> 
-          <td>
-            <input type="text" size = "15" name="edate" value="{{edate}}">
-          </td>
-        </tr>
-      </div>
-        <tr>
-          <td class="label">
-            Function:
-          </td>
-          <td>
-          <select name="jobfunction">
+      <h3>Company:</h3>
+            <input type="text"  name="company" class="txtinput" value="{{company}}">
+
+
+ <h3>Duration:</h3>
+<section id ="duration">
+            <input type="text" name="sdate" id="sdate" class="txtinput2" value="{{sdate}}" >
+            <h3 style="float:left; display:inline; padding-top:3px; padding-bottom:3px; padding-right:50px; padding-left:50px;"> To </h3>
+             <input type="text" name="edate" id="edate" class="txtinput2" style="float:right" value="{{edate}}">
+</section>
+
+
+<h3 style="clear:both;"> Function:</h3>
+          <select name="jobfunction"  id="recipient"  class="selmenu">
             {%set fselected1 = ''%}
             {%set fselected2 = ''%}
             {%set fselected3 = ''%}
@@ -107,49 +102,31 @@
             <option value="IT" {{fselected5}}>IT</option>
             <option value="Supply Chain" {{fselected6}}>Supply Chain</option>
           </select>
-        </td>
-        </tr>
-        <tr>
-          <td class="label">
+
+       <h3>
             Location:
-          </td>
-          <td>
-             <input type="text" name="location" value="{{location}}">
-          </td>
-        </tr>
-         <tr>
-          <td class="label">
-            Descibe a day in your job:
-          </td>
-          <td>
-            <textarea name="jd" rows="13" cols="75" value="">{{jd}}</textarea>
-          </td>
-        </tr>
-         <tr>
-          <td class="label">
-            What You love about your job:
-          </td>
-          <td>
-             <textarea name="jlove" rows="10" cols="75" value="">{{jlove}}</textarea>
-          </td>
-        </tr>
-         <tr>
-          <td class="label">
-            What you don't like about your job:
-          </td>
-          <td>
-             <textarea name="jhate" rows="5" cols="75" value="">{{jhate}}</textarea>
-          </td>
-        </tr>
+          </h3>
+
+             <input type="text" name="location" id="location" class="txtinput" value="{{location}}">
 
 
-      </table>
+            <textarea name="jd"  id="jd" placeholder="Describe a day in your job ..." value="" class="txtblock">{{jd}}</textarea>
+
+
+             <textarea name="jlove" id = "jlove" placeholder="What do you love about you job ..." value="" class="txtblock">{{jlove}}</textarea>
+
+
+             <textarea name="jhate"   id = "jhate" placeholder="What do you not like about you job ..." value="" class="txtblock">{{jhate}}</textarea>
+
+</div>
 
       <div class="error">
         {{error}}
       </div>
 
       <input type="submit">
+      </section>
+
     </form>
   </body>
 

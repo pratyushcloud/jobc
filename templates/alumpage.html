@@ -2,19 +2,12 @@
 <html>
 <head>
   <link type="text/css" rel="stylesheet" href="/static/main.css" />
-
+  <link type="text/css" rel="stylesheet" href="/static/topmenu.css" />
   <title>Jobc</title>
 </head>
 
 <body>
 
-  <div class="login-area">
-      {% if user %}
-	        {{user}} (<a class="login-link" href="/jobc/logout">logout</a>)
-   {% else %}
-	        <a class="login-link" href="/jobc">login</a>
-    {% endif %}
-  </div>
 
       <div id="topMenu">
       <ul>
@@ -22,9 +15,15 @@
         <li><a href="/jobc/realjob">Real Job Review</a></li>
         <li><a href="http://mentorcareer.blogspot.in/">Career Advice</a></li>
         <li><a href="/jobc/aboutus">About Us</a></li>
+        <li  class="login-area"> {% if user %}
+	        {{user}} <a class="login-link" style="display:inline" href="/jobc/logout">(logout)</a>
+   {% else %}
+	        <a class="login-link" style="display:inline" href="/jobc">login</a>
+    {% endif %}
+    </li>
       </ul>
       </div>
-  
+
 
     <h2>Hi there Jokaite!</h2>
 	<img src="{{pictureUrl}}" alt={{fullname}} height="80" width="80">

@@ -4,6 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<link type="text/css" rel="stylesheet" href="/static/main.css" />
+	  <link type="text/css" rel="stylesheet" href="/static/topmenu.css" />
 
  <STYLE type="text/css">
 
@@ -13,13 +14,19 @@
 <body>
 
 			<div id="topMenu">
-			<ul>
-				<li><a href="/jobc">Home</a></li>
-				<li><a href="/jobc/realjob">Real Job Review</a></li>
-				<li><a href="http://mentorcareer.blogspot.in/">Career Advice</a></li>
-				<li><a href="/jobc/aboutus"><strong style="color:white;">About Us</strong></a></li>
-			</ul>
-			</div>
+				       <ul>
+				         <li><a href="/jobc"><strong style="color:white;">Home</strong></a></li>
+				         <li><a href="/jobc/realjob">Real Job Review</a></li>
+				         <li><a href="http://mentorcareer.blogspot.in/">Career Advice</a></li>
+				         <li><a href="/jobc/aboutus">About Us</a></li>
+				         <li  class="login-area"> {% if user %}
+				 	        {{user}} <a class="login-link" style="display:inline" href="/jobc/logout">(logout)</a>
+				    {% else %}
+				 	        <a class="login-link" style="display:inline" href="/jobc">login</a>
+				     {% endif %}
+				     </li>
+				       </ul>
+      </div>
 
 <h1>About Us</h1>
 
