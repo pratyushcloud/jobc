@@ -104,9 +104,9 @@ class Job(db.Model):
 	salary_growth = db.StringProperty(required=False)
 	work_life_balance = db.StringProperty(required=False)
 	fixed_salary = db.StringProperty(default="") #let it be string for now. it can be INR or $
-	#variable_salary = db.StringProperty(default="") #let it be string for now. it can be INR or $
-	yearly_bonus = db.StringProperty(default="") #it can % or absolute
-	joining_bonus = db.StringProperty(default="") #let it be string for now
+	variable_salary = db.StringProperty(default="") #let it be string for now. it can be INR or $
+	#yearly_bonus = db.StringProperty(default="") #it can % or absolute
+	#joining_bonus = db.StringProperty(default="") #let it be string for now
 	stock = db.StringProperty(default="")
 	alum_base = db.StringProperty(required=False)
 	interview_question = db.TextProperty(default = "")

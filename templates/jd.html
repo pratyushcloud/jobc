@@ -4,10 +4,6 @@
 <html>
   <head>
     <title>Real Job Details</title>
-    <style type="text/css">
-      .label {text-align: right}
-      .error {color: red}
-    </style>
   <link rel="stylesheet" type="text/css" media="all" href="/static/style.css">
   <link rel="stylesheet" type="text/css" media="all" href="/static/responsive.css">
   <link type="text/css" rel="stylesheet" href="/static/topmenu.css" />
@@ -21,9 +17,9 @@
 	         <li><a href="http://mentorcareer.blogspot.in/">Career Advice</a></li>
 	         <li><a href="/jobc/aboutus">About Us</a></li>
 	         <li  class="login-area"> {% if user %}
-	 	        {{user}} <a class="login-link" style="display:inline" href="/jobc/logout">(logout)</a>
+	 	        {{user}} <a  style="display:inline" href="/jobc/logout">(logout)</a>
 	    {% else %}
-	 	        <a class="login-link" style="display:inline" href="/jobc">login</a>
+	 	        <a  style="display:inline" href="/jobc">login</a>
 	     {% endif %}
 	     </li>
 	       </ul>
@@ -34,7 +30,6 @@
     <form name="hongkiat" id="hongkiat-form" method="post">
 <div id="wrapping" class="clearfix">
 
-          <h3>Post as:</h3>
 			<img src="http://2.bp.blogspot.com/-neLmKL2ctig/UUXNBzWWr5I/AAAAAAAAFIw/fBeEqZcO8g4/s1600/user.png">
             {%set authorcheck1 = ''%}
             {%set authorcheck2 = ''%}
@@ -48,15 +43,15 @@
             {%endif%}
 			<span class="radiobadge">
            	 	<input type="radio" name="postas"  value="self" {{authorcheck1}}>
-				<label for="self">{{oneself}}</label>
+				<label for="self">Post as {{oneself}}</label>
 			</span>
            	<span class="radiobadge">
-           		<input type="radio" name="postas" value="alum" {{authorcheck2}} >
-           		<label for="alum">{{schoolname}}</label>
+           		<input type="radio" name="postas" value="Alumnus of {{schoolname}}" {{authorcheck2}} >
+           		<label for="alum">Post as {{schoolname}}</label>
            	</span>
            	<span class="radiobadge">
-           		<input type="radio" name="postas"  value="anonymous" {{authorcheck3}}>
-				<label for="anonymous">Anonymous</label>
+           		<input type="radio" name="postas"  value="Anonymous" {{authorcheck3}}>
+				<label for="anonymous">Post Anonymously</label>
 			</span>
           <h3>Job Title:</h3>
 			<input type="text"  name="title" placeholder="Job Title" autocomplete="off" class="txtinput" value="{{title}}">
@@ -109,24 +104,24 @@
 
              <input type="text" name="location" id="location" class="txtinput" value="{{location}}">
 
-
+            <h3> What's a typical day like for {{title}}  at {{company}}?</h3>
             <textarea name="jd"  id="jd" placeholder="Describe a day in your job ..." value="" class="txtblock">{{jd}}</textarea>
 
-
+              <h3> What's there to love about this job? </h3>
              <textarea name="jlove" id = "jlove" placeholder="What do you love about you job ..." value="" class="txtblock">{{jlove}}</textarea>
 
-
+             <h3> What one may not like about this job? </h3>
              <textarea name="jhate"   id = "jhate" placeholder="What do you not like about you job ..." value="" class="txtblock">{{jhate}}</textarea>
-
+  			 <section id="buttons">
+			      <input type="submit" name="submit" id="submitbtn" class="submitbtn" >
+      		 </section>
 </div>
 
       <div class="error">
         {{error}}
       </div>
 
-      <input type="submit">
-      </section>
-
+</section>
     </form>
   </body>
 

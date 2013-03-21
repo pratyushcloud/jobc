@@ -100,13 +100,6 @@ input[type=submit] {
     color: #333;
 }
 
-
- 
-#topMenu ul li a:hover{
-    color:#FFF;
-    text-decoration:none;
-}
-
 .wrapper {
     text-align: center;
 }

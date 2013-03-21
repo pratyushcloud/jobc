@@ -3,29 +3,38 @@
 <html>
   <head>
     <title>Real Job Details</title>
-    <style type="text/css">
-      .label {text-align: right}
-      .error {color: red}
-    </style>
-
+  <link rel="stylesheet" type="text/css" media="all" href="/static/style.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/static/responsive.css">
+  <link type="text/css" rel="stylesheet" href="/static/topmenu.css" />
   </head>
 
   <body>
-  <div class="login-area">
-      {% if user %}
-          {{user}} (<a class="login-link" href="/jobc/logout">logout</a>)
-   {% else %}
-          <a class="login-link" href="/jobc">login</a>
-    {% endif %}
-  </div>
-    <h2>Job Details</h2>
-    <form method="post">
-      <table>
-      	<tr>
-          <td class="label">
-            Work Opportunity at firm
-          </td>
-          <td>
+        <div id="topMenu">
+	       <ul>
+	         <li><a href="/jobc"><strong style="color:white;">Home</strong></a></li>
+	         <li><a href="/jobc/realjob">Real Job Review</a></li>
+	         <li><a href="http://mentorcareer.blogspot.in/">Career Advice</a></li>
+	         <li><a href="/jobc/aboutus">About Us</a></li>
+	         <li  class="login-area"> {% if user %}
+	 	        {{user}} <a class="login-link" style="display:inline" href="/jobc/logout">(logout)</a>
+	    {% else %}
+	 	        <a class="login-link" style="display:inline" href="/jobc">login</a>
+	     {% endif %}
+	     </li>
+	       </ul>
+      </div>
+
+    	<section id="container">
+    	    <h2>Real Job Details</h2>
+    		<form name="hongkiat" id="hongkiat-form" method="post">
+			<div id="wrapping" class="clearfix">
+
+			<table>
+            <tr>
+            <td>
+            <h4>Work Opportunity at firm &nbsp;&nbsp;&nbsp;</h4>
+			</td>
+
             {%set wopcheck1 = ''%}
             {%set wopcheck2 = ''%}
             {%set wopcheck3 = ''%}
@@ -39,17 +48,30 @@
             {%elif wopcheck == "Notok"%}
             {%set wopcheck4 = 'checked'%}
             {% endif %}
-            <input type="radio" name="wop" value="Excellent" {{wopcheck1}}>Excellent
-            <input type="radio" name="wop" value="Good" {{wopcheck2}}>Good
-            <input type="radio" name="wop" value="Ok" {{wopcheck3}}> OK
-            <input type="radio" name="wop" value="Notok" {{wopcheck4}}>Not Ok
-          </td>
-        </tr>
-        <tr>
-          <td class="label">
-            Work Culture
-          </td>
-          <td>
+            <td>
+            <span class="radiobadge">
+            <input type="radio" name="wop" value="Excellent" {{wopcheck1}}>
+            <label for="Excellent" style="margin-right:5px">Excellent</label>
+            </span>
+            <span class="radiobadge">
+            <input type="radio" name="wop" value="Good" {{wopcheck2}}>
+            <label for="Good" style="margin-right:5px">Good</label>
+            </span>
+            <span class="radiobadge">
+            <input type="radio" name="wop" value="Ok" {{wopcheck3}}>
+            <label for="Ok" style="margin-right:5px">Ok</label>
+            </span>
+            <span class="radiobadge">
+            <input type="radio" name="wop" value="Notok" {{wopcheck4}}>
+            <label for="Notok" style="margin-right:5px">Not OK</label>
+			</span>
+			</td>
+			</tr>
+
+			<tr><td>
+            <h4>Work Culture</h4>
+			</td>
+
             {%set wccheck1 = ''%}
             {%set wccheck2 = ''%}
             {%set wccheck3 = ''%}
@@ -63,18 +85,32 @@
             {%elif wccheck == "Notok"%}
             {%set wccheck4 = 'checked'%}
             {% endif %}
-            <input type="radio" name="wc" value="Excellent" {{wccheck1}}>Excellent
-            <input type="radio" name="wc" value="Good" {{wccheck2}}>Good
-            <input type="radio" name="wc" value="Ok" {{wccheck3}}> OK
-            <input type="radio" name="wc" value="Notok" {{wccheck4}}>Not Ok
-          </td>
-        </tr>
+            <td>
+             <span class="radiobadge">
+            <input type="radio" name="wc" value="Excellent" {{wccheck1}}>
+            <label for="Excellent" style="margin-right:5px">Excellent</label>
+            </span>
+             <span class="radiobadge">
+            <input type="radio" name="wc" value="Good" {{wccheck2}}>
+            <label for="Good" style="margin-right:5px">Good</label>
+            </span>
+             <span class="radiobadge">
+            <input type="radio" name="wc" value="Ok" {{wccheck3}}>
+            <label for="Ok" style="margin-right:5px">Ok</label>
+            </span>
+             <span class="radiobadge">
+            <input type="radio" name="wc" value="Notok" {{wccheck4}}>
+            <label for="Notok" style="margin-right:5px">Not Ok</label>
+            </span>
 
-        <tr>
-          <td class="label">
-            Salary Growth
-          </td>
-          <td>
+			</td>
+			</tr>
+
+			<tr>
+			<td>
+            <h4>Salary Growth</h4>
+			</td>
+
             {%set wsgcheck1 = ''%}
             {%set wsgcheck2 = ''%}
             {%set wsgcheck3 = ''%}
@@ -88,17 +124,29 @@
             {%elif wsgcheck == "Notok"%}
             {%set wsgcheck4 = 'checked'%}
             {% endif %}
-            <input type="radio" name="wsg" value="Excellent" {{wsgcheck1}}>Excellent
-            <input type="radio" name="wsg" value="Good" {{wsgcheck2}}>Good
-            <input type="radio" name="wsg" value="Ok" {{wsgcheck3}}> OK
-            <input type="radio" name="wsg" value="Notok" {{wsgcheck4}}>Not Ok
-          </td>
-        </tr>
-        <tr>
-          <td class="label">
-            Work Life Balance
-          </td>
-          <td>
+            <td>
+            <span class="radiobadge">
+            <input type="radio" name="wsg" value="Excellent" {{wsgcheck1}}>
+            <label for="Excellent" style="margin-right:5px">Excellent</label>
+            </span>
+            <span class="radiobadge">
+            <input type="radio" name="wsg" value="Good" {{wsgcheck2}}>
+            <label for="Good" style="margin-right:5px">Good</label>
+            </span>
+            <span class="radiobadge">
+            <input type="radio" name="wsg" value="Ok" {{wsgcheck3}}>
+            <label for="Ok" style="margin-right:5px">Ok</label>
+            </span>
+            <span class="radiobadge">
+            <input type="radio" name="wsg" value="Notok" {{wsgcheck4}}>
+			<label for="Notok" style="margin-right:5px">Not Ok</label>
+            </span>
+			</td>
+			<tr>
+			<tr>
+			<td>
+            <h4>Work Life Balance</h4>
+			</td>
             {%set wlbcheck1 = ''%}
             {%set wlbcheck2 = ''%}
             {%set wlbcheck3 = ''%}
@@ -112,47 +160,62 @@
             {%elif wlbcheck == "Notok"%}
             {%set wlbcheck4 = 'checked'%}
             {% endif %}
-            <input type="radio" name="wlb" value="Excellent" {{wlbcheck1}}>Excellent
-            <input type="radio" name="wlb" value="Good" {{wlbcheck2}}>Good
-            <input type="radio" name="wlb" value="Ok" {{wlbcheck3}}> OK
-            <input type="radio" name="wlb" value="Notok" {{wlbcheck4}}>Not Ok
+            <td>
+            <span class="radiobadge">
+            <input type="radio" name="wlb" value="Excellent" {{wlbcheck1}}>
+            <label for="Excellent" style="margin-right:5px">Excellent</label>
+            </span>
+            <span class="radiobadge">
+            <input type="radio" name="wlb" value="Good" {{wlbcheck2}}>
+            <label for="Good" style="margin-right:5px">Good</label>
+            </span>
+            <span class="radiobadge">
+            <input type="radio" name="wlb" value="Ok" {{wlbcheck3}}>
+            <label for="Ok" style="margin-right:5px">Ok</label>
+            </span>
+            <span class="radiobadge">
+            <input type="radio" name="wlb" value="Notok" {{wlbcheck4}}>
+			<label for="Notok" style="margin-right:5px">Not Ok</label>
+            </span>
+			</td>
+			</tr>
+	<tr>
+	<td>
+            	<h4>Alumni Base</h4>
+	</td>
+	<td>
+              {%set abasecheck1 = ''%}
+              {%set abasecheck2 = ''%}
+              {%set abasecheck3 = ''%}
+              {%if abasecheck == 'Strong'%}
+              {%set abasecheck1 = 'checked'%}
+              {%elif abasecheck == 'Moderate'%}
+              {%set abasecheck2 = 'checked'%}
+              {%elif abasecheck == 'Weak'%}
+              {%set abasecheck3 = 'checked'%}
+              {% endif %}
+              <span class="radiobadge">
+            	<input type="radio" name="abase" value="Strong" {{abasecheck1}}>
+            	<label for="Strong">Strong</label>
+            </span>
+            <span class="radiobadge">
+            <input type="radio" name="abase" value="Moderate" {{abasecheck2}}>
+            <label for="Moderate">Moderate</label>
+            </span>
+            <span class="radiobadge">
+            <input type="radio" name="abase" value="Weak" {{abasecheck3}}>
+			<label for="Weak">Weak</label>
+            </span>
+</td>
+</tr>
+</table>
+           		<h3> Salary: </h3>
 
-          </td>
-
-        </tr>
-        <tr>
-			<td class="h2">
-           		Salary <br><br>
-          	</td>
-
-        </tr>
-        <tr>
-        	<td class="label">
-            	Fixed Salary
-          	</td>
-        	<td>
-            	<input type="text" name="fsalary" value="{{fsalary}}">
-          	</td>
-         </tr>
-         <tr>
-          	<td class="label">
-            	Variable Salary
-          	</td>
-          	<td>
-          <select>
-            <option value="ybonus">Yearly Bonus</option>
-            <option value="jbonus">Joining Bonus</option>
-          </select>
-        </td>
-          	<td>
-            	<input type="text" name="vsalary" value="{{vslary}}">
-          	</td>
-          </tr>
-          <tr>
-        	<td class="label">
-            	Stock Option
-          	</td>
-        	<td>
+            	<h4>Fixed Salary</h4>
+            	<input type="text" name="fsalary" style="margin-right:30px" value="{{fsalary}}">
+            	<h4>Variable Salary</h4>
+            	<input type="text" name="vsalary" style="margin-right:30px"  value="{{vslary}}">
+            	<h4>Stock Option</h4>
               {%set stockcheck1 = ''%}
               {%set stockcheck2 = ''%}
               {%if stockcheck == 'Yes'%}
@@ -160,52 +223,35 @@
               {%elif stockcheck == 'No'%}
               {%set stockcheck2 = 'checked'%}
               {% endif %}
-            	<input type="radio" name="stock" value="Yes" {{stockcheck1}}>Yes
-            	<input type="radio" name="stock" value="No" {{stockcheck2}}>No
-          	</td>
-         </tr>
-         <tr>
-        	<td class="label">
-            	Alumni Base
-          	</td>
-        	<td>
-              {%set abasecheck1 = ''%}
-              {%set abasecheck2 = ''%}
-              {%set abasecheck3 = ''%}
-              {%if abasecheck == 'Strong'%}
-              {%set abasecheck1 = 'checked'%}
-              {%elif abasecheck == 'Moderate'%}
-              {%set abasecheck2 = 'checked'%} 
-              {%elif abasecheck == 'Weak'%}
-              {%set abasecheck3 = 'checked'%} 
-              {% endif %}            
-            	<input type="radio" name="abase" value="Strong" {{abasecheck1}}>Strong
-            	<input type="radio" name="abase" value="Moderate" {{abasecheck2}}>Moderate
-            	<input type="radio" name="abase" value="Weak" {{abasecheck3}}>Weak
-          	</td>
-         </tr>
-          <tr>
-          <td class="label">
-            Interview Questions/ Experience and Answers
-          </td>
-          <td>
-            <textarea name="iq" rows="10" cols="50" value="">{{iq}}</textarea>
-          </td>
-        </tr>
-        <tr>
-          <td class="label">
-            Exit Options
-          </td>
-          <td>
-            <textarea name="eo" rows="5" cols="50" value="">{{eo}}</textarea>
-          </td>
-        </tr>
-      </table>
+            <span class="radiobadge">
+            	<input type="radio" name="stock" value="Yes" {{stockcheck1}}>
+           		<label for="Yes">Yes</label>
+			</span>
+			<span class="radiobadge">
+            	<input type="radio" name="stock" value="No" {{stockcheck2}}>
+				<label for="No">No</label>
+            </span>
+
+
+            <h3>What questions would you ask somebody who wants to interview for this job?</h3>
+
+            <textarea name="iq" id="iq" value="" class="txtblock">{{iq}}</textarea>
+
+
+            <h3> What are the exit options for this job?</h3>
+
+            <textarea name="eo" id="eo" value="" class="txtblock">{{eo}}</textarea>
+
+       <section id="buttons">
+	  			      <input type="submit" name="submit" id="submitbtn" class="submitbtn" >
+      		 </section>
+
+      </div>
        <div class="error">
         {{error}}
       </div>
 
-      <input type="submit">
+      		 </section>
 </form>
   </body>
 

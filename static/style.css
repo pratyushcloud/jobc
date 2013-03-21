@@ -7,7 +7,7 @@ font-size: 62.5%;
 font-family: "Trebuchet MS", Arial, Tahoma, sans-serif; 
 color: #333; 
 background: #fff url('http://3.bp.blogspot.com/-keRpZyH7Y1Y/UUXFlTKn5wI/AAAAAAAAFHk/DkqIrT7S6ic/s1600/body-bg.jpg') 0px 0px repeat; 
-padding-top: 10px; 
+padding-top: 0px; 
 }
 
 a { color: #4681da; text-decoration: none; }
@@ -15,14 +15,13 @@ a:hover { text-decoration: underline; }
 
 h2 { 
 border-bottom: 1px solid #ddd; 
-border-top: 1px solid #ddd; 
 color: #363636;
 font-family: "Droid Serif", Georgia, serif; 
 font-size: 2.6em; 
 line-height: 1.8em; 
 font-weight: 500; 
-margin-top: 25px; 
-margin-bottom: 25px; 
+margin-top: 5px; 
+margin-bottom: 5px; 
 padding: 12px 0; 
 text-align: center; 
 }
@@ -32,6 +31,14 @@ letter-spacing: -0.04em;
 font-weight: bold;
 font-size: 1.44em;
 margin-bottom: 10px;
+}
+
+h4 {
+letter-spacing: -0.04em;
+font-weight: bold;
+font-size: 1.44em;
+display:inline;
+margin-bottom: 15px;
 }
 
 span.chyron { font-size: 1.2em; padding-top: 10px; }
@@ -110,18 +117,6 @@ transition: border 0.15s linear 0s, box-shadow 0.15s linear 0s, color 0.15s line
 }
 
 
-#hongkiat-form input#name {
-background: #fff url('images/user.png') 5px 4px no-repeat;
-}
-#hongkiat-form input#email {
-background: #fff url('images/email.png') 5px 4px no-repeat;
-}
-#hongkiat-form input#website {
-background: #fff url('images/website.png') 5px 4px no-repeat;
-}
-#hongkiat-form input#telephone {
-background: #fff url('images/phone.png') 5px 4px no-repeat;
-}
 #hongkiat-form input#location {
 background: #fff url('http://1.bp.blogspot.com/-GUZ54w8aT4w/UUXG-Ley9SI/AAAAAAAAFIE/gnUgp75q3-A/s1600/location-icon.png') 5px 4px no-repeat;
 }
@@ -148,6 +143,14 @@ background: #fff url('http://3.bp.blogspot.com/-Q8sQ6c_ELk8/UUXRFQ0rQ_I/AAAAAAAA
 
 #hongkiat-form input#user{
 background: #fff url('http://2.bp.blogspot.com/-neLmKL2ctig/UUXNBzWWr5I/AAAAAAAAFIw/fBeEqZcO8g4/s1600/user.png') 5px 4px no-repeat;
+}
+
+#hongkiat-form textarea.txtblock#iq {
+background: #fff url('http://4.bp.blogspot.com/-EhXJufdFmxE/UUks1RTArBI/AAAAAAAAFKA/CgVTehCS0nQ/s1600/QnA.jpg') 5px 4px no-repeat;
+}
+
+#hongkiat-form textarea.txtblock#eo {
+background: #fff url('http://2.bp.blogspot.com/-ptlWOPgVnPQ/UUkrX_W6zgI/AAAAAAAAFJ4/y5B1FME-mPU/s1600/rocket2.png') 5px 4px no-repeat;
 }
 
 #hongkiat-form textarea {

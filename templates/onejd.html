@@ -2,8 +2,67 @@
 
 <html>
   <head>
-     <link type="text/css" rel="stylesheet" href="/static/main.css" />
        <link type="text/css" rel="stylesheet" href="/static/topmenu.css" />
+       <style type="text/css">
+/** basic default styles **/
+html { margin: 0; padding: 0; }
+
+body { 
+height: 101%; 
+font-size: 62.5%; 
+font-family: "Trebuchet MS", Arial, Tahoma, sans-serif; 
+color: #333; 
+background: #fff url('http://3.bp.blogspot.com/-keRpZyH7Y1Y/UUXFlTKn5wI/AAAAAAAAFHk/DkqIrT7S6ic/s1600/body-bg.jpg') 0px 0px repeat; 
+padding-top: 0px; 
+}
+
+
+h2 { 
+border-bottom: 1px solid #ddd; 
+color: #363636;
+font-family: "Droid Serif", Georgia, serif; 
+font-size: 2.6em; 
+line-height: 1.8em; 
+font-weight: 500; 
+margin-top: 5px; 
+margin-bottom: 5px; 
+padding: 12px 0; 
+text-align: center; 
+}
+
+h3 {
+letter-spacing: -0.04em;
+font-weight: bold;
+font-size: 1.44em;
+margin-bottom: 10px;
+}
+
+h4 {
+display: block;
+font-size:1.2em;
+margin-bottom: 5 px
+color: #777;
+}
+
+/** main blocks **/
+#container { 
+display: block;
+max-width: 800px;
+margin: 0 auto; 
+margin-top: 5px; 
+margin-bottom: 66px;
+padding: 20px 15px; 
+background: #fff; 
+border-radius: 6px; 
+-webkit-border-radius: 6px; 
+-moz-border-radius: 6px;
+-webkit-box-sizing: border-box;
+-moz-box-sizing: border-box; 
+box-sizing: border-box;  
+}
+
+
+       </style>
     <title>{{title}}</title>
 
 
@@ -16,27 +75,29 @@
 	  	         <li><a href="http://mentorcareer.blogspot.in/">Career Advice</a></li>
 	  	         <li><a href="/jobc/aboutus">About Us</a></li>
 	  	         <li  class="login-area"> {% if user %}
-	  	 	        {{user}} <a class="login-link" style="display:inline" href="/jobc/logout">(logout)</a>
+	  	 	        {{user}} <a  style="display:inline" href="/jobc/logout">(logout)</a>
 	  	    {% else %}
-	  	 	        <a class="login-link" style="display:inline" href="/jobc">login</a>
+	  	 	        <a  style="display:inline" href="/jobc">login</a>
 	  	     {% endif %}
 	  	     </li>
 	  	       </ul>
       </div>
-<h2> {{title}} @ <a href="{{companyurl}}">{{companyname}}</a></h2>
-Review Posted by  <a class = "" href="{{authorurl}}">{{author}}</a><br>
-Review Date {{date}} <br> <br>
+ <section id="container">
+<h2> {{title}} </br>@ <a href="{{companyurl}}">{{companyname}}</a></h2>
+<h3> Review Posted by  <a {{authorurl}}>{{author}}</a></h3>
+<h4>Review Date {{date}} </h4>
 
-<b>My typical one day at job</b><br>{{jd}}<br><br>
-<b>What I love</b> <br>{{jlove}}<br><br>
-<b>What I not like</b> <br>{{jhate}}<br><br>
-<b>Interview question</b><br>{{iq}}<br><br>
-<b>Exit Option</b> <br>{{eo}}<br><br>
-Work Opportunity: {{wop}}<br>
-Work Culture: {{wc}}<br>
-Salary Growth: {{wsg}}<br>
-Work Life Balance: {{wlb}}<br><br>
-Salary {{salary}}<br><br>
+<h3>{{jd}} </h3>
 
+<h3>{{jlove}}</h3>
+<h3>{{jhate}}</h3>
+{%if rating_sentence%}<h3> {{rating_sentence}} </h3>{%endif%}
+<h3>What would you be tested on if you were to interview for this?</h3><h4>{{iq}}</h4>
+<h3>Exit Option:</h3><h4>{{eo}}</h4>
+
+<h3>Salary {{salary}}</h3>
+
+{%if user%}<span style="font-size:1.2em"> <em><a href={{jdpage1}}>Edit Real Job Details</a></em></span>{%endif%}
+ </section>
   </body>
   </html>

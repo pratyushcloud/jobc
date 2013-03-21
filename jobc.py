@@ -29,14 +29,22 @@ USERID_COOKIE = 'user_id'
 # Use your API key and secret to instantiate consumer object
 consumer_key    =   'gge7se1gxi53' #mentorme api
 consumer_secret =   'Vlun3FqAAu7H5Yq3'
-#consumer_key= 'yfn26ez21xqb' #localhost
-#consumer_secret = '8k478hHqjam3273z' #localhost
+consumer_key= 'yfn26ez21xqb' #localhost
+consumer_secret = '8k478hHqjam3273z' #localhost
 
 logging.getLogger().setLevel(logging.DEBUG)
 
 def render_str(template, **params):
     t = jinja_env.get_template(template)
     return t.render(params)
+
+def getUserFromCookie(cookie_value) :
+	if cookie_value:
+	  	if encrypt.valid_cookie(cookie_value):
+	  		userid = encrypt.getUserId(cookie_value)
+	  		person =  dbmodels.Person.get_by_id(userid)#TODO handle case when memcache is flushed and database row itself gets deleted 
+	  		return person
+
 
 class MainPage(webapp2.RequestHandler) :
 	
@@ -72,7 +80,7 @@ class MainPage(webapp2.RequestHandler) :
 	  		if encrypt.valid_cookie(cookie_value):
 	  			userid = encrypt.getUserId(cookie_value)
 	  			logging.error("userid %d" %userid)
-	  			person =  dbmodels.Person.get_by_id(userid)
+	  			person =  dbmodels.Person.get_by_id(userid)#TODO handle case when memcache is flushed and database row itself gets deleted 
 	  			logging.error("person")
 	  			logging.error(person)
 	 			for pjob in person.person_job:
@@ -122,7 +130,7 @@ class MainPage(webapp2.RequestHandler) :
 		else: 
 			# valid user
 			if (person.oauth_expires_in - int(round(time.time()))) < 24*60*60 :
-				logging.error("users access token has expired")
+				logging.error("users access token has expired %d - %d" %(person.oauth_expires_in, int(round(time.time()))))
 				self.response.out.write(render_str("login.html"))
 			else: 
 				self.username = person.fname
@@ -151,6 +159,30 @@ class AboutUs(webapp2.RequestHandler) :
 	def get(self) :
 		self.response.out.write(render_str("aboutus.html"))
 
+def rating2sentence(rating, category):
+	if category not in rating:
+		return None
+	rating_sentence = ''
+	for i in range(0, len(rating[category])) :
+		if i == len(rating[category]) - 2:
+			rating_sentence= rating_sentence + rating[category][i] + ' and '
+		elif i < len(rating[category]) - 1:
+			rating_sentence= rating_sentence + rating[category][i] + ', '
+		else:
+			rating_sentence = rating_sentence + rating[category][i]
+	if rating_sentence == '':
+	 return None 
+	if category == "Notok":
+		category = "below average"
+	if category == "Ok":
+		category = "average"
+	if category == "Excellent":
+		category = "excellent"
+	if category == "Good":
+		category = "good"
+	rating_sentence = "I would rate this firm as " + category + " in " + rating_sentence + "."
+	return rating_sentence
+
 def setRealJDContent(job) :
 		params = {}
 		params['title'] = job.title 
@@ -158,23 +190,65 @@ def setRealJDContent(job) :
 		params['companyname'] = company.company_name
 		params['companyurl'] = "http://www.linkedin.com/company/" + str(job.company_id)
 		params['author'] = job.posted_by_text
-		params['authorurl'] = ''
+		params['authorurl'] = ""
 		if params['author'] == "self":
 			person = dbmodels.getPerson(job.person_linkedin_id)
 			params['author'] = person.fname + " (Alumnus of " + person.keyschool.schoolname+")"
-			params['authorurl'] = "http://www.linkedin.com/profile/view?id="+person.linkedin_id
+			params['authorurl'] = "href=http://www.linkedin.com/profile/view?id="+person.linkedin_id
 
 		params['date'] = job.modify_date.strftime('%m/%Y')
 		params['jd'] = job.dayinoffice
-		params['salary'] = "Fixed: " + job.fixed_salary + " Variable: Yearly Bonus:" + job.yearly_bonus+" Joining Bonus:" + job.joining_bonus + " Stock: " + job.stock 
+		params['salary'] = "Fixed: " + job.fixed_salary + " Variable:" + job.variable_salary + " Stock: " + job.stock 
 		params['jlove'] = job.jlove
 		params['jhate'] = job.jhate
 		params['iq'] = job.interview_question
 		params['eo'] = job.exit_option
-		params['wop'] = job.work_opportunity
+		rating = {}
+		if job.work_opportunity:
+			rating[job.work_opportunity] = []
+			rating[job.work_opportunity].append('work opportunity')
+		if job.work_culture:
+			if job.work_culture not in rating:
+				rating[job.work_culture] = []
+			rating[job.work_culture].append('work culture')
+		if job.salary_growth:
+			if job.work_culture not in rating :
+				rating[job.work_culture] = []			
+			rating[job.salary_growth].append('salary growth')
+		if job.work_life_balance:
+			if job.work_life_balance not in rating :
+				rating[job.work_life_balance] = []			
+			rating[job.work_life_balance].append('work life balance')
+
+		rating_ex = rating2sentence(rating, 'Excellent')
+		rating_good = rating2sentence(rating, 'Good')
+		rating_ok = rating2sentence(rating, 'Ok')
+		rating_notok = rating2sentence(rating, 'Notok')
+
+		rating_sentence = ''
+		if not rating_ex and not rating_good and not rating_notok and not rating_ok:
+			params['rating_sentence'] = None
+		else :
+			rating_sentence = "I would rate this firm as "
+			count_ratings = len(rating)
+			i = 0
+			if rating_ex:
+				rating_sentence = rating_ex
+			if rating_good:
+				rating_sentence = rating_sentence + " " + rating_good
+			if rating_ok:
+				rating_sentence = rating_sentence + " " + rating_ok 
+			if rating_notok:
+				rating_sentence = rating_sentence + " " + rating_notok
+			params['rating_sentence'] = rating_sentence	
+		
 		params['wc'] = job.work_culture
 		params['wsg'] = job.salary_growth
 		params['wlb'] = job.work_life_balance
+		params['abase'] = job.alum_base
+		params['wop'] = job.work_opportunity
+		params['jdpage2'] = '/jobc/realjd/_edit/' + job.jobkey+'?page=1'
+		params['jdpage1'] = '/jobc/realjd/_edit/' + job.jobkey
 		return params
 
 class RealJD(webapp2.RequestHandler) :
@@ -183,11 +257,17 @@ class RealJD(webapp2.RequestHandler) :
 		if job_id[0] == "/":
 			job_id = job_id[1:]
 		job = dbmodels.getJob(job_id)
+
 		if not job:
 			#throw some error
 			self.redirect("/jobc")
 
+		cookie_value = self.request.cookies.get(USERID_COOKIE)
+		person = getUserFromCookie(cookie_value)
 		params = setRealJDContent(job)
+		params['user'] = ""
+		if person:
+			params['user'] = person.fname
 		self.response.out.write(render_str("onejd.html", **params))
 
 class RealJDEdit(webapp2.RequestHandler) :
@@ -205,7 +285,7 @@ class RealJDEdit(webapp2.RequestHandler) :
 		fullname = p.fname
 
 		if not page:
-			school = "Alum of " + p.keyschool.schoolname
+			school = p.keyschool.schoolname
 			location = p.location
 			title = job.title
 			logging.error("companyid")
@@ -230,8 +310,7 @@ class RealJDEdit(webapp2.RequestHandler) :
 			eo = job.exit_option
 			alum_base = job.alum_base
 			stock = job.stock
-			vsalary = job.yearly_bonus
-			vsalary= job.joining_bonus
+			vsalary = job.variable_salary
 			wop = job.work_opportunity
 			wc = job.work_culture
 			wsg = job.salary_growth
@@ -277,8 +356,9 @@ class RealJDEdit(webapp2.RequestHandler) :
 			job.salary_growth = self.request.get("wsg")
 			job.work_life_balance = self.request.get("wlb")
 			job.fixed_salary = self.request.get("fsalary")
-			job.yearly_bonus = self.request.get("ybonus")
-			job.joining_bonus = self.request.get("jbonus")
+			#job.yearly_bonus = self.request.get("ybonus")
+			#job.joining_bonus = self.request.get("jbonus")
+			job.variable_salary = self.request.get("vsalary")
 			job.stock = self.request.get("stock")
 			job.alum_base = self.request.get("abase")
 			job.interview_question = self.request.get("iq")
