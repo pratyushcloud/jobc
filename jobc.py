@@ -212,8 +212,8 @@ def setRealJDContent(job) :
 				rating[job.work_culture] = []
 			rating[job.work_culture].append('work culture')
 		if job.salary_growth:
-			if job.work_culture not in rating :
-				rating[job.work_culture] = []			
+			if job.salary_growth not in rating :
+				rating[job.salary_growth] = []			
 			rating[job.salary_growth].append('salary growth')
 		if job.work_life_balance:
 			if job.work_life_balance not in rating :
