@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link type="text/css" rel="stylesheet" href="/static/main.css" />
+
+  <title>Jobc</title>
+</head>
+
+<body>
+
+  <div class="login-area">
+      {% if user %}
+	        {{user}} (<a class="login-link" href="/jobc/logout">logout</a>)
+   {% else %}
+	        <a class="login-link" href="/jobc">login</a>
+    {% endif %}
+  </div>
+
+      <div id="topMenu">
+      <ul>
+        <li><a href="/jobc"><strong style="color:white;">Home</strong></a></li>
+        <li><a href="/jobc/realjob">Real Job Review</a></li>
+        <li><a href="http://mentorcareer.blogspot.in/">Career Advice</a></li>
+        <li><a href="/jobc/aboutus">About Us</a></li>
+      </ul>
+      </div>
+
+<h1>No {{function}} job as yet!</h1>
+<h2><a href ="/jobc/realjob">See all jobs by category</a></h2>
+</body>
+</html>
