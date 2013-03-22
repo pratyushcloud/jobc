@@ -1,45 +1,55 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <link type="text/css" rel="stylesheet" href="/static/main.css" />
+  <link type="text/css" rel="stylesheet" href="/static/style.css" />
   <link type="text/css" rel="stylesheet" href="/static/topmenu.css" />
   <title>Jobc</title>
+  <style type="text/css">
+h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+  </style>
 </head>
 
 <body>
 
 
-      <div id="topMenu">
-      <ul>
-        <li><a href="/jobc"><strong style="color:white;">Home</strong></a></li>
-        <li><a href="/jobc/realjob">Real Job Review</a></li>
-        <li><a href="http://mentorcareer.blogspot.in/">Career Advice</a></li>
-        <li><a href="/jobc/aboutus">About Us</a></li>
-        <li  class="login-area"> {% if user %}
-	        {{user}} <a class="login-link" style="display:inline" href="/jobc/logout">(logout)</a>
-   {% else %}
-	        <a class="login-link" style="display:inline" href="/jobc">login</a>
-    {% endif %}
-    </li>
-      </ul>
+          <div id="topMenu">
+             <ul>
+               <li><a href="/jobc"><strong style="color:white;">Home</strong></a></li>
+               <li><a href="/jobc/realjob">Real Job Review</a></li>
+               <li><a href="http://mentorcareer.blogspot.in/">Career Advice</a></li>
+               <li><a href="/jobc/aboutus">About Us</a></li>
+               <li  class="login-area"> {% if user %}
+                {{user}} <a  style="display:inline" href="/jobc/logout">(logout)</a>
+          {% else %}
+                <a  style="display:inline" href="/jobc">login</a>
+           {% endif %}
+           </li>
+             </ul>
       </div>
+      <br><br>
+<section id = "container">
 
-
-    <h2>Hi there Jokaite!</h2>
+    <h3>Hi there Jokaite!</h3>
 	<img src="{{pictureUrl}}" alt={{fullname}} height="80" width="80">
-Help IIMC students chose a career! Find out what your peers, seniors and juniors are actually doing in their job!
-<br><br>
-<h2> Tell us about your post MBA jobs!</h2>
+<h4>Help IIMC students chose a career! </h4> <h4 style="display:block">Find out what your peers, seniors and juniors are actually doing in their job!</h4>
+
+<h3> Tell us about your post MBA jobs!</h3> 
 {% for n in range(njobs-1, -1, -1)%}
 <tr>
-<td>	Tell us about your job <a  href="/jobc/realjd/_edit/{{job[n][2]}}">{{job[n][0]}} at {{job[n][1]}}</a></td> <br><br>
+<td>	<h3>Tell us about your job <a  href="/jobc/realjd/_edit/{{job[n][2]}}">{{job[n][0]}} at {{job[n][1]}}</a></td> </h3>
 
 </tr>
 {%endfor%}
 
-   <br><br>
+   <br><h4>
    You can post job review anonymously or post job review as an alum of IIMC or with your public credentials!
-   You control your profile!
+   You control your profile! </h4>
+
+   </section>
  </body>
 
 </html>
