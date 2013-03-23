@@ -33,9 +33,6 @@ textarea {
 }
 
 input[type=submit] {
-      position: absolute;
-      top: 50%;
-      left:35%;
       border: 2px
       solid #009;
     font-size:50px

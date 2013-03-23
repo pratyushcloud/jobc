@@ -3,7 +3,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-	<link type="text/css" rel="stylesheet" href="/static/main.css" />
+	<link type="text/css" rel="stylesheet" href="/static/style.css" />
 	  <link type="text/css" rel="stylesheet" href="/static/topmenu.css" />
 
  <STYLE type="text/css">
@@ -13,43 +13,44 @@
 </head>
 <body>
 
-			<div id="topMenu">
-				       <ul>
-				         <li><a href="/jobc"><strong style="color:white;">Home</strong></a></li>
-				         <li><a href="/jobc/realjob">Real Job Review</a></li>
-				         <li><a href="http://mentorcareer.blogspot.in/">Career Advice</a></li>
-				         <li><a href="/jobc/aboutus">About Us</a></li>
-				         <li  class="login-area"> {% if user %}
-				 	        {{user}} <a class="login-link" style="display:inline" href="/jobc/logout">(logout)</a>
-				    {% else %}
-				 	        <a class="login-link" style="display:inline" href="/jobc">login</a>
-				     {% endif %}
-				     </li>
-				       </ul>
+ <div id="topMenu">
+             <ul>
+               <li><a href="/jobc"><strong style="color:white;">Home</strong></a></li>
+               <li><a href="/jobc/realjob">Real Job Review</a></li>
+               <li><a href="http://mentorcareer.blogspot.in/">Career Advice</a></li>
+               <li><a href="/jobc/aboutus">About Us</a></li>
+               <li  class="login-area"> {% if user %}
+                {{user}} <a  style="display:inline" href="/jobc/logout">(logout)</a>
+          {% else %}
+                <a  style="display:inline" href="/jobc">login</a>
+           {% endif %}
+           </li>
+             </ul>
       </div>
+      <br><br>
+ <section id="container">
 
-<h1>About Us</h1>
+<h2>About Us</h2>
 
-<b>What is Mentor Me</b></br>
-Mentor me is an online platform for students of Joka to connect with their alumni across the globe. </br></br>
-<b>Who uses our platform</b></br>
-This has exclusively been developed for IIM Calcutta students so that they can make informed career decisions  </br></br>
+<h3>What is Mentor Me?</h3>
+<h4 style="font-weight: normal;">Mentor me is an online platform for students of Joka to connect with their alumni across the globe. </h4>
+<h3>Who uses our platform ?</h3>
+<h3 style="font-weight: normal;">This has exclusively been developed for IIM Calcutta community so that they can make informed career decisions  </h3>
 
-<b>How does it work</b> </br>
-Two easy steps:- </br>
-1)	Login using your updated LinkedIn profile <br>
-2)	Connect with peers / seniors </br>
-</br>
-<b>USP</b> </br>
-<b>First Year students </b> </br>
-•	Understand different career options </br>
-•	Know in-depth about internship experience </br></br>
-<b>Second year students </b></br>
-•	Understand real job profiles / salary package </br></br>
-<b>Alumni </b></br>
-•	Pay it forward by helping current IIM Calcutta students </br>
-•	Know about referral openings in different firms </br>
-•	Connect with peers / alumni to make career advancement / shifts
+<h3>How does it work?</h3>
+<h3 style="font-weight: normal;">Two easy steps:- </h3>
+<h3 style="font-weight: normal;">1)	Login using your updated LinkedIn profile </h3>
+<h3 style="font-weight: normal;">2)	Connect with peers / seniors </h3>
 
+<h3>Benefits for First Year students </h3>
+<h3 style="font-weight: normal;">•	Understand different career options </h3>
+<h3 style="font-weight: normal;">•	Know in-depth about internship experience </h3>
+<h3>Benefits for Second year students </h3>
+<h3 style="font-weight: normal;">•	Understand real job profiles / salary package </h3>
+<h3>Benefits for Alumni </h3>
+<h3 style="font-weight: normal;">•	Pay it forward by helping current IIM Calcutta students </h3>
+<h3 style="font-weight: normal;">•	Know about referral openings in different firms </h3>
+<h3 style="font-weight: normal;">•	Connect with peers / alumni to make career advancement / shifts</h3>
+</section>
 </body>
 </html>

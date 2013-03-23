@@ -29,8 +29,8 @@ USERID_COOKIE = 'user_id'
 # Use your API key and secret to instantiate consumer object
 consumer_key    =   'gge7se1gxi53' #mentorme api
 consumer_secret =   'Vlun3FqAAu7H5Yq3'
-consumer_key= 'yfn26ez21xqb' #localhost
-consumer_secret = '8k478hHqjam3273z' #localhost
+#consumer_key= 'yfn26ez21xqb' #localhost
+#consumer_secret = '8k478hHqjam3273z' #localhost
 
 logging.getLogger().setLevel(logging.DEBUG)
 
