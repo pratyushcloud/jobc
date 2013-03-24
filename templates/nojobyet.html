@@ -1,31 +1,44 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <link type="text/css" rel="stylesheet" href="/static/main.css" />
-
-  <title>Jobc</title>
+    <link rel="stylesheet" type="text/css" media="all" href="/static/style.css">
+  <link type="text/css" rel="stylesheet" href="/static/topmenu.css" />
+ <STYLE type="text/css">
+ body {
+background: #fff url('http://3.bp.blogspot.com/-keRpZyH7Y1Y/UUXFlTKn5wI/AAAAAAAAFHk/DkqIrT7S6ic/s1600/body-bg.jpg') 0px 0px repeat;
+}
+</style>
 </head>
 
 <body>
 
-  <div class="login-area">
-      {% if user %}
-	        {{user}} (<a class="login-link" href="/jobc/logout">logout</a>)
-   {% else %}
-	        <a class="login-link" href="/jobc">login</a>
-    {% endif %}
-  </div>
+ <div class="wrapper" id="wrapper">
 
-      <div id="topMenu">
-      <ul>
-        <li><a href="/jobc"><strong style="color:white;">Home</strong></a></li>
-        <li><a href="/jobc/realjob">Real Job Review</a></li>
-        <li><a href="http://mentorcareer.blogspot.in/">Career Advice</a></li>
-        <li><a href="/jobc/aboutus">About Us</a></li>
-      </ul>
+       <div id="topMenu">
+             <ul>
+               <li><a href="/jobc"><strong style="color:white;">Home</strong></a></li>
+               <li><a href="/jobc/realjob">Real Job Review</a></li>
+               <li><a href="http://mentorcareer.blogspot.in/">Career Advice</a></li>
+               <li><a href="/jobc/aboutus">About Us</a></li>
+               <li  class="login-area"> {% if user %}
+                {{user}} <a  style="display:inline" href="/jobc/logout">(logout)</a>
+          {% else %}
+                <a  style="display:inline" href="/jobc">login</a>
+           {% endif %}
+           </li>
+             </ul>
       </div>
+      <br><br>
+<section id="container">
 
 <h1>No {{function}} job as yet!</h1>
-<h2><a href ="/jobc/realjob">See all jobs by category</a></h2>
+<h9><a href ="/jobc/realjob">See all jobs by category</a></h9>
+
+</section>
+</div>
+
+<div id="footer" class="footer">
+<p>Copyright &copy; 2013</p>
+</div>
 </body>
 </html>

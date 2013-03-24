@@ -202,6 +202,8 @@ def setRealJDContent(job) :
 		params['jlove'] = job.jlove
 		params['jhate'] = job.jhate
 		params['iq'] = job.interview_question
+		params['cvpoint'] = job.cvpoint
+		params['ip'] = job.interview_process
 		params['eo'] = job.exit_option
 		rating = {}
 		if job.work_opportunity:
@@ -307,6 +309,8 @@ class RealJDEdit(webapp2.RequestHandler) :
 				school=school, title=title, company=company, sdate = sdate, edate = edate, jhate = jhate, jlove=jlove, jd = jd, jfunction = jfunction))
 		elif page == "1":
 			iq = job.interview_question
+			ip = job.interview_process
+			cvpoint = job.cvpoint
 			eo = job.exit_option
 			alum_base = job.alum_base
 			stock = job.stock
@@ -318,7 +322,7 @@ class RealJDEdit(webapp2.RequestHandler) :
 			fixed_salary = job.fixed_salary
 			#logging.error("work culter = " + wc)
 			self.response.out.write(render_str("jd2.html", user = fullname, wopcheck = wop, iq=iq, eo=eo, abasecheck=alum_base, wccheck = wc, wsgcheck=wsg,
-				stockcheck = stock, wlbcheck = wlb,  fsalary=fixed_salary))
+				stockcheck = stock, wlbcheck = wlb,  fsalary=fixed_salary, ip=ip, cvpoint=cvpoint))
         #else:
 			# some exception code here
 		#	self.redirect("/jobc")
@@ -362,6 +366,8 @@ class RealJDEdit(webapp2.RequestHandler) :
 			job.stock = self.request.get("stock")
 			job.alum_base = self.request.get("abase")
 			job.interview_question = self.request.get("iq")
+			job.interview_process = self.request.get("ip")
+			job.cvpoint = self.request.get("cvpoint")
 			job.exit_option = self.request.get("eo")
 			dbmodels.setJob(jobkey=job.jobkey, job=job)
 			job.put()

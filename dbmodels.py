@@ -110,6 +110,8 @@ class Job(db.Model):
 	stock = db.StringProperty(default="")
 	alum_base = db.StringProperty(required=False)
 	interview_question = db.TextProperty(default = "")
+	interview_process = db.TextProperty(default = "")
+	cvpoint = db.TextProperty(default = "")
 	exit_option = db.TextProperty(default = "")
 	posted_by_text = db.StringProperty(default="")
 	modify_date = db.DateTimeProperty(auto_now=True)

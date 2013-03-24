@@ -6,9 +6,15 @@
   <link rel="stylesheet" type="text/css" media="all" href="/static/style.css">
   <link rel="stylesheet" type="text/css" media="all" href="/static/responsive.css">
   <link type="text/css" rel="stylesheet" href="/static/topmenu.css" />
+   <style type="text/css">
+     body {
+    background: #fff url('http://3.bp.blogspot.com/-keRpZyH7Y1Y/UUXFlTKn5wI/AAAAAAAAFHk/DkqIrT7S6ic/s1600/body-bg.jpg') 0px 0px repeat;
+    }
+</style>
   </head>
 
   <body>
+  <div class="wrapper" id="wrapper">
         <div id="topMenu">
 	       <ul>
 	         <li><a href="/jobc"><strong style="color:white;">Home</strong></a></li>
@@ -209,7 +215,7 @@
 </td>
 </tr>
 </table>
-           		<h3> Salary: </h3>
+           		<h3 style="margin-bottom: 8px;margin-top:15px;"> Salary: </h3>
 
             	<h4>Fixed Salary</h4>
             	<input type="text" name="fsalary" style="margin-right:30px" value="{{fsalary}}">
@@ -232,18 +238,21 @@
 				<label for="No">No</label>
             </span>
 
+			<h3 style="margin-bottom: 8px;margin-top:15px;">What CV points or skills would be relevant for this job?</h3>
 
-            <h3>What questions would you ask somebody who wants to interview for this job?</h3>
+            <textarea name="cvpoint" id="cvpoint" value="" class="txtblock">{{cvpoint}}</textarea>
+
+            <h3 style="margin-bottom: 8px;">What's the interview process and what types of questions are asked for this position?</h3>
 
             <textarea name="iq" id="iq" value="" class="txtblock">{{iq}}</textarea>
 
 
-            <h3> What are the exit options for this job?</h3>
+            <h3 style="margin-bottom: 8px;"> What are the exit options for this job?</h3>
 
             <textarea name="eo" id="eo" value="" class="txtblock">{{eo}}</textarea>
 
        <section id="buttons">
-	  			      <input type="submit" name="submit" id="submitbtn" class="submitbtn" >
+	  			      <input type="submit" name="submit" id="submitbtn" class="submitbtn" value="Submit">
       		 </section>
 
       </div>
@@ -253,6 +262,10 @@
 
       		 </section>
 </form>
+   </div>
+	   <div id="footer" class="footer">
+	   <p>Copyright &copy; 2013</p>
+</div>
   </body>
 
 </html>

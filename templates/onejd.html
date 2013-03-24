@@ -5,13 +5,16 @@
        <link type="text/css" rel="stylesheet" href="/static/topmenu.css" />
         <link rel="stylesheet" type="text/css" media="all" href="/static/style.css">
     <style type="text/css">
-
+  body {
+  background: #fff url('http://3.bp.blogspot.com/-keRpZyH7Y1Y/UUXFlTKn5wI/AAAAAAAAFHk/DkqIrT7S6ic/s1600/body-bg.jpg') 0px 0px repeat;
+  }
     </style>
     <title>{{title}}</title>
 
 
   </head>
    <body>
+    <div class="wrapper" id="wrapper">
       <div id="topMenu">
 	  	       <ul>
 	  	         <li><a href="/jobc"><strong style="color:white;">Home</strong></a></li>
@@ -43,5 +46,9 @@
 
 {%if user%}<span style="font-size:1.2em"> <em><a href={{jdpage1}}>Edit Real Job Details</a></em></span>{%endif%}
  </section>
+  </div>
+ 	   <div id="footer" class="footer">
+ 	   <p>Copyright &copy; 2013</p>
+</div>
   </body>
   </html>

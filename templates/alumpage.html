@@ -10,12 +10,17 @@ h2 {
     font-weight: bold;
     margin-bottom: 20px;
 }
-  </style>
+
+ body {
+background: #fff url('http://3.bp.blogspot.com/-keRpZyH7Y1Y/UUXFlTKn5wI/AAAAAAAAFHk/DkqIrT7S6ic/s1600/body-bg.jpg') 0px 0px repeat;
+}
+
+</style>
 </head>
 
 <body>
 
-
+ <div class="wrapper" id="wrapper">
           <div id="topMenu">
              <ul>
                <li><a href="/jobc"><strong style="color:white;">Home</strong></a></li>
@@ -33,23 +38,28 @@ h2 {
       <br><br>
 <section id = "container">
 
-    <h3>Hi there Jokaite!</h3>
-	<img src="{{pictureUrl}}" alt={{fullname}} height="80" width="80">
-<h4>Help IIMC students chose a career! </h4> <h4 style="display:block">Find out what your peers, seniors and juniors are actually doing in their job!</h4>
-
-<h3> Tell us about your post MBA jobs!</h3> 
+    <h2>Hi there {{fullname}}!</h2>
+	<img src="{{pictureUrl}}" alt={{fullname}} height="80" width="80"  style="float:left;margin:0 10px 0 0;">
+<h3 style="font-weight:normal;">Help IIMC students chose a career! </h3>
+<h3  style="font-weight:normal;">Find out what your peers, seniors and juniors are actually doing in their job!</h3>
+<br>
+<h9> Tell us about your post MBA jobs!</h9><br></br>
 {% for n in range(njobs-1, -1, -1)%}
 <tr>
-<td>	<h3>Tell us about your job <a  href="/jobc/realjd/_edit/{{job[n][2]}}">{{job[n][0]}} at {{job[n][1]}}</a></td> </h3>
+<td>	<h3 >&bull; Tell us about your job <a  href="/jobc/realjd/_edit/{{job[n][2]}}">{{job[n][0]}} at {{job[n][1]}}</a></td> </h3>
 
 </tr>
 {%endfor%}
 
-   <br><h4>
+   <br><h3 style="font-weight:normal;">
    You can post job review anonymously or post job review as an alum of IIMC or with your public credentials!
-   You control your profile! </h4>
+   You control your profile! </h3>
 
    </section>
+   </div>
+   <div id="footer" class="footer">
+   <p>Copyright &copy; 2013</p>
+</div>
  </body>
 
 </html>

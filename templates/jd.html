@@ -7,9 +7,16 @@
   <link rel="stylesheet" type="text/css" media="all" href="/static/style.css">
   <link rel="stylesheet" type="text/css" media="all" href="/static/responsive.css">
   <link type="text/css" rel="stylesheet" href="/static/topmenu.css" />
+    <style type="text/css">
+   body {
+  background: #fff url('http://3.bp.blogspot.com/-keRpZyH7Y1Y/UUXFlTKn5wI/AAAAAAAAFHk/DkqIrT7S6ic/s1600/body-bg.jpg') 0px 0px repeat;
+  }
+
+</style>
   </head>
 
   <body>
+   <div class="wrapper" id="wrapper">
         <div id="topMenu">
 	       <ul>
 	         <li><a href="/jobc"><strong style="color:white;">Home</strong></a></li>
@@ -53,15 +60,15 @@
            		<input type="radio" name="postas"  value="Anonymous" {{authorcheck3}}>
 				<label for="anonymous">Post Anonymously</label>
 			</span>
-          <h3>Job Title:</h3>
+          <h3 style="margin-bottom: 8px;margin-top:15px;">Job Title:</h3>
 			<input type="text"  name="title" placeholder="Job Title" autocomplete="off" class="txtinput" value="{{title}}">
 
 
-      <h3>Company:</h3>
+      <h3 style="margin-bottom: 8px;">Company: </h3>
             <input type="text"  name="company" class="txtinput" value="{{company}}">
 
 
- <h3>Duration:</h3>
+ <h3 style="margin-bottom: 8px;">Duration:</h3>
 <section id ="duration">
             <input type="text" name="sdate" id="sdate" class="txtinput2" value="{{sdate}}" >
             <h3 style="float:left; display:inline; padding-top:3px; padding-bottom:3px; padding-right:50px; padding-left:50px;"> To </h3>
@@ -69,7 +76,7 @@
 </section>
 
 
-<h3 style="clear:both;"> Function:</h3>
+<h3 style="clear:both;margin-bottom: 8px;"> Function:</h3>
           <select name="jobfunction"  id="recipient"  class="selmenu">
             {%set fselected1 = ''%}
             {%set fselected2 = ''%}
@@ -98,31 +105,31 @@
             <option value="Supply Chain" {{fselected6}}>Supply Chain</option>
           </select>
 
-       <h3>
+       <h3 style="margin-bottom: 8px;margin-top:15px;">
             Location:
           </h3>
 
              <input type="text" name="location" id="location" class="txtinput" value="{{location}}">
 
-            <h3> What's a typical day like for {{title}}  at {{company}}?</h3>
+            <h3 style="margin-bottom: 8px;"> What's a typical day like for {{title}}  at {{company}}?</h3>
             <textarea name="jd"  id="jd" placeholder="Describe a day in your job ..." value="" class="txtblock">{{jd}}</textarea>
 
-              <h3> What's there to love about this job? </h3>
+              <h3 style="margin-bottom: 8px;"> What's there to love about this job? </h3>
              <textarea name="jlove" id = "jlove" placeholder="What do you love about you job ..." value="" class="txtblock">{{jlove}}</textarea>
 
-             <h3> What one may not like about this job? </h3>
+             <h3 style="margin-bottom: 8px;"> What one may not like about this job? </h3>
              <textarea name="jhate"   id = "jhate" placeholder="What do you not like about you job ..." value="" class="txtblock">{{jhate}}</textarea>
   			 <section id="buttons">
-			      <input type="submit" name="submit" id="submitbtn" class="submitbtn" >
+			      <input type="submit" name="submit" id="submitbtn" class="submitbtn" value="Submit">
       		 </section>
 </div>
 
-      <div class="error">
-        {{error}}
-      </div>
-
 </section>
     </form>
+     </div>
+	   <div id="footer" class="footer">
+	   <p>Copyright &copy; 2013</p>
+</div>
   </body>
 
 </html>
