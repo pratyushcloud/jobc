@@ -90,7 +90,10 @@ margin-bottom: 15px;
   text-align:center
   }
  
-  
+ p {
+ 	font-size: 1.44em;
+ 	margin-bottom: 5px;
+ }
 span.chyron { font-size: 1.2em; padding-top: 10px; }
 
 /** main blocks **/

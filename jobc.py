@@ -29,8 +29,8 @@ USERID_COOKIE = 'user_id'
 # Use your API key and secret to instantiate consumer object
 consumer_key    =   'gge7se1gxi53' #mentorme api
 consumer_secret =   'Vlun3FqAAu7H5Yq3'
-#consumer_key= 'yfn26ez21xqb' #localhost
-#consumer_secret = '8k478hHqjam3273z' #localhost
+consumer_key= 'yfn26ez21xqb' #localhost
+consumer_secret = '8k478hHqjam3273z' #localhost
 
 logging.getLogger().setLevel(logging.DEBUG)
 
@@ -82,7 +82,7 @@ class MainPage(webapp2.RequestHandler) :
 	  			logging.error("userid %d" %userid)
 	  			person =  dbmodels.Person.get_by_id(userid)#TODO handle case when memcache is flushed and database row itself gets deleted 
 	  			logging.error("person")
-	  			logging.error(person)
+	  			logging.error(person.linkedin_id + " " + person.fname)
 	 			for pjob in person.person_job:
 					post_mba_jobs.append((pjob.title, pjob.company.company_name,pjob.jobkey))
 
@@ -259,7 +259,7 @@ class RealJD(webapp2.RequestHandler) :
 		if job_id[0] == "/":
 			job_id = job_id[1:]
 		job = dbmodels.getJob(job_id)
-
+		author = dbmodels.getPerson(job.person_linkedin_id)
 		if not job:
 			#throw some error
 			self.redirect("/jobc")
@@ -268,7 +268,7 @@ class RealJD(webapp2.RequestHandler) :
 		person = getUserFromCookie(cookie_value)
 		params = setRealJDContent(job)
 		params['user'] = ""
-		if person:
+		if person.linkedin_id == author.linkedin_id: # show edit link when author is the logged in user
 			params['user'] = person.fname
 		self.response.out.write(render_str("onejd.html", **params))
 
@@ -283,19 +283,29 @@ class RealJDEdit(webapp2.RequestHandler) :
 			# some error here
 			self.redirect("/jobc")
 		
-		p= dbmodels.getPerson(job.person_linkedin_id)
-		fullname = p.fname
+		author = dbmodels.getPerson(job.person_linkedin_id)
+		cookie_value = self.request.cookies.get(USERID_COOKIE)
+		person = getUserFromCookie(cookie_value)
+
+		fullname = author.fname
+
+		if not author or not person or not person.linkedin_id == author.linkedin_id : # allow edit when author is the logged in user
+			user = ''
+			if person:
+				user = person.fname
+			self.response.out.write(render_str("authorlogin.html", user = user, author = fullname))
+			return
 
 		if not page:
-			school = p.keyschool.schoolname
-			location = p.location
+			school = author.keyschool.schoolname
+			location = author.location
 			title = job.title
 			logging.error("companyid")
 			logging.error(job.company_id)
 			company = dbmodels.getCompany(job.company_id).company_name
 			sdate = job.sdate
 			authorcheck = job.posted_by_text
-			if (authorcheck == ""):
+			if authorcheck == "" or authorcheck.startswith("Alumnus") :
 				authorcheck = "alum"
 			logging.error("authorcheck " + authorcheck)
 			if sdate:
@@ -382,7 +392,12 @@ class RealJDEdit(webapp2.RequestHandler) :
 
 class ReviewDashboard(webapp2.RequestHandler) :
 	def get(self):
-		self.response.out.write(render_str("jobfunctions.html"))
+		cookie_value = self.request.cookies.get(USERID_COOKIE)
+		person = getUserFromCookie(cookie_value)
+		user = ''
+		if person:
+			user = person.fname 
+		self.response.out.write(render_str("jobfunctions.html", user=user))
 
 
 def jobbycompany(jobids):

@@ -28,6 +28,7 @@ def parseContent(content, expires_in) :
 
 		expires_on = int(round(time.time())) + expires_in
 
+
 		if j.has_key('firstName'):
 			fname = j['firstName']
 		if j.has_key('lastName'):
@@ -48,6 +49,7 @@ def parseContent(content, expires_in) :
 		logging.error("publicUrl = " +publicUrl)
 		
 		person = dbmodels.Person.all().filter('linkedin_id = ', linkedin_id).get()
+		logging.error(str(person.oauth_expires_in) + " " + str(expires_on))
 
 		if person:
 			#check if there are any updates in fname, lname, picture_url, public_profile_url

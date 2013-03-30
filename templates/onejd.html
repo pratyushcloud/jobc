@@ -31,20 +31,25 @@
       </div>
  <section id="container">
 <h2> {{title}} </br>@ <a href="{{companyurl}}">{{companyname}}</a></h2>
-<h3> Review Posted by  <a {{authorurl}}>{{author}}</a></h3>
-<h4>Review Date {{date}} </h4>
+<p style="font-weight:bold;margin-top:10px;"> Review Posted by  <a {{authorurl}}>{{author}}</a> on  {{date}}</p>
+<p style="font-weight:bold;">Real Job Details: </h3>
 
-<h3>{{jd}} </h3>
+<p >{{jd}} </p>
 
-<h3>{{jlove}}</h3>
-<h3>{{jhate}}</h3>
-{%if rating_sentence%}<h3> {{rating_sentence}} </h3>{%endif%}
-<h3>What would you be tested on if you were to interview for this?</h3><h4>{{iq}}</h4>
-<h3>Exit Option:</h3><h4>{{eo}}</h4>
+<p >{{jlove}}</p>
+<p >{{jhate}}</p>
 
-<h3>Salary {{salary}}</h3>
+{%if rating_sentence%}<p> {{rating_sentence}} </p>{%endif%}
+<p style="font-weight:bold;margin-top:10px;">Relevant skills/CV points for this job:</p>
+<p >{{cvpoint}}</p>
+<p style="font-weight:bold;margin-top:10px;">Interview Process/Interview Questions:</p>
+<p >{{iq}}</p>
+<p style="font-weight:bold;margin-top:10px;">Exit Option:</p>
+<p>{{eo}}</p>
 
-{%if user%}<span style="font-size:1.2em"> <em><a href={{jdpage1}}>Edit Real Job Details</a></em></span>{%endif%}
+<p style="font-weight:bold;margin-top:10px;">Salary {{salary}}</p>
+
+{%if user%}<span style="font-size:1.2em; margin-bottom:10px;"> <em><a href={{jdpage1}}>Edit Real Job Details</a></em></span>{%endif%}
  </section>
   </div>
  	   <div id="footer" class="footer">
