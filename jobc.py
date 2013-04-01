@@ -29,8 +29,8 @@ USERID_COOKIE = 'user_id'
 # Use your API key and secret to instantiate consumer object
 consumer_key    =   'gge7se1gxi53' #mentorme api
 consumer_secret =   'Vlun3FqAAu7H5Yq3'
-consumer_key= 'yfn26ez21xqb' #localhost
-consumer_secret = '8k478hHqjam3273z' #localhost
+#consumer_key= 'yfn26ez21xqb' #localhost
+#consumer_secret = '8k478hHqjam3273z' #localhost
 
 logging.getLogger().setLevel(logging.DEBUG)
 
@@ -268,7 +268,7 @@ class RealJD(webapp2.RequestHandler) :
 		person = getUserFromCookie(cookie_value)
 		params = setRealJDContent(job)
 		params['user'] = ""
-		if person.linkedin_id == author.linkedin_id: # show edit link when author is the logged in user
+		if person and author and person.linkedin_id == author.linkedin_id: # show edit link when author is the logged in user
 			params['user'] = person.fname
 		self.response.out.write(render_str("onejd.html", **params))
 

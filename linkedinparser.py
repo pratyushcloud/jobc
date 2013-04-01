@@ -6,7 +6,7 @@ import time
 import dbmodels
 import exceptions
 
-validschools = ['Indian Institute of Management, Calcutta', 'IIM Calcutta']
+validschools = ['Indian Institute of Management, Calcutta', 'IIM Calcutta', 'Xavier Institute of Management']
 
 def parseContent(content, expires_in) :
 		""" content is linkedin json expires_in = expires in n seconds """
@@ -49,7 +49,6 @@ def parseContent(content, expires_in) :
 		logging.error("publicUrl = " +publicUrl)
 		
 		person = dbmodels.Person.all().filter('linkedin_id = ', linkedin_id).get()
-		logging.error(str(person.oauth_expires_in) + " " + str(expires_on))
 
 		if person:
 			#check if there are any updates in fname, lname, picture_url, public_profile_url
