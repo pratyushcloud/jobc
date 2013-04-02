@@ -129,7 +129,7 @@ class MainPage(webapp2.RequestHandler) :
 
 		else: 
 			# valid user
-			if (person.oauth_expires_in - int(round(time.time()))) < 24*60*60 :
+			if (person.oauth_expires_in - int(round(time.time()))) < 24*60*60 : #linkedin oauth expires in 60 days, keeping a margin of 10
 				logging.error("users access token has expired %d - %d" %(person.oauth_expires_in, int(round(time.time()))))
 				self.response.out.write(render_str("login.html"))
 			else: 

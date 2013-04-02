@@ -74,7 +74,7 @@ def parseContent(content, expires_in) :
 			person = dbmodels.Person(fname=fname, lname = lname, linkedin_id=linkedin_id, industry=industry, location=location, picture_url=pictureUrl, public_profile_url=publicUrl)
 			if pictureUrl and pictureUrl != '':
 				person.picture = dbmodels.fetchPicture(pictureUrl)
-			person.oauth_expires_in = expires_in
+			person.oauth_expires_in = expires_on
 			person.put()
 
 		school_list = []
